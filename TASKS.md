@@ -14,12 +14,11 @@ Rules for TASKS.md usage are at the bottom of the file.
 
 - App must work in horizontal orientation, too.
 
-- The recorded waveform looks much weaker than the leaked metronome click.
-
 - There is no accuracy color coding for peaks in the waveform.
 
 - The leaked clicks appear at a different offset from the marked beat on each
-  run, even if I erase the recording in between.
+  run, even if I erase the recording in between. Make sure to do extensive
+  online research for audio timing accuracy in Android apps.
 
 ## Scheduled
 
