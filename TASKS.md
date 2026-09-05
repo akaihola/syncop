@@ -1,0 +1,78 @@
+# Issue tracking for SynCop
+
+Rules for TASKS.md usage are at the bottom of the file.
+
+## Unverified proposals
+
+## Ordered backlog
+
+- Navigating the recording by dragging doesn't work. The timeline only moves a
+  few pixels no matter how much I drag.
+
+- Pinch zooming only zooms one small step at a time, not continuously as I
+  continue to pinch more.
+
+- App must work in horizontal orientation, too.
+
+- The recorded waveform looks much weaker than the leaked metronome click.
+
+- There is no accuracy color coding for peaks in the waveform.
+
+- The leaked clicks appear at a different offset from the marked beat on each
+  run, even if I erase the recording in between.
+
+## Scheduled
+
+## In progress
+
+## Completed
+
+[*]: TASKS.md
+
+---
+
+## Rules
+
+Here are the rules for TASKS.md usage:
+
+### TASKS.md maintenance sessions
+
+- Each backlog item must be prefixed with either
+  - a numbered reference-style link (e.g. `[1]`) to a description file, or
+  - `[*]` to indicate no description file is needed for a simple task.
+- Link references are listed between `## Completed` and `## Rules`.
+- If any issue is missing a link:
+  - Create the first missing numbered description file in
+    docs/tasks/<N-issue-description>.md and add the link
+
+### Modifying issues
+
+- Ensure dependencies between issues are correctly updated.
+- State dependencies using
+  - indented `- Depends on: [N]` bullets in TASKS.md, and
+  - YAML frontmatter in description files.
+- Ensure backlog order respects dependencies.
+
+### Workflow for new issue completion
+
+1. Choose issue and schedule work (typically by a heartbeat)
+- Pick the first backlog issue with no dependency to any uncompleted issue.
+- Move it under `## Scheduled` in `TASKS.md` and remove it from `## Ordered
+  backlog` in the `main` branch and commit.
+
+2. Work on the issue (typically by a task workflow)
+- Move the issue under `## In progress` in `TASKS.md` in the worktree branch,
+  ensure it's not in `## Ordered backlog`, and commit.
+- Create or update, review and refine a plan in
+  docs/tasks/<N-issue-description>.md in `main` if more description is needed
+  than nicely fits in a bullet point. If you created a plan document, link to it
+  using a new `[N]` reference-style link.
+- Commit description file (if any) and TASKS.md in `main`.
+- From now on, ensure worktree feature branch is always rebased on `main`.
+- Implement the plan, and lint, test, review and refine the implementation in
+  the worktree feature branch.
+
+3. Merge and deploy (typically by last steps of a task workflow)
+- Merge the rebased branch on `main`, and remove the worktree and branch.
+- Move the issue from `## In progress` to `## Completed` in TASKS.md and commit.
+- Do any deployment steps if defined in the general development worklow.

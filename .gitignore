@@ -1,0 +1,20 @@
+.gradle/
+build/
+local.properties
+*.iml
+.idea
+.kotlin/
+/captures
+# sandbox/tooling artefacts
+.claude/
+.serena/
+.vscode
+.mcp.json
+.bash_profile
+.bashrc
+.gitconfig
+.gitmodules
+.profile
+.ripgreprc
+.zprofile
+.zshrc
