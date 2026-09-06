@@ -18,12 +18,11 @@ Rules for TASKS.md usage are at the bottom of the file.
 - [*] Navigating the recording by dragging doesn't work. The timeline only
   moves a few pixels no matter how much I drag.
 
+## Completed
+
 - [*] The leaked clicks appear at a different offset from the marked beat on each
   run, even if I erase the recording in between. Make sure to do extensive
   online research for audio timing accuracy in Android apps.
-
-## Completed
-
 - [*] There is no accuracy color coding for peaks in the waveform.
 - [*] Pinch zooming only zooms one small step at a time, not continuously as I
   continue to pinch more.
