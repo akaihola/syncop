@@ -16,6 +16,7 @@ import fi.kaihola.syncop.model.deviationColor
 import fi.kaihola.syncop.ui.theme.Fog
 import fi.kaihola.syncop.ui.theme.Paper
 import fi.kaihola.syncop.ui.theme.RecordRed
+import kotlin.math.abs
 import kotlin.math.max
 
 /** Fraction of the width at which the playhead line sits. */
@@ -97,6 +98,7 @@ private fun DrawScope.drawTimeline(session: Session, playhead: Long, secondsVisi
     val path = Path()
     val cols = w.toInt()
     val peaks = FloatArray(cols)
+    val onsets = synchronized(session) { session.onsets.toList() }
     synchronized(session) {
         for (c in 0 until cols) {
             val f0 = firstFrame + (c * framesPerPx).toLong()
@@ -111,6 +113,25 @@ private fun DrawScope.drawTimeline(session: Session, playhead: Long, secondsVisi
     for (c in cols - 1 downTo 0) path.lineTo(c.toFloat(), waveMid + waveHalf * peaks[c])
     path.close()
     drawPath(path, Paper.copy(alpha = 0.75f))
+
+    // Accuracy colors show the detected attack in each peak column.
+    for (c in 0 until cols) {
+        if (peaks[c] == 0f) continue
+        val f0 = firstFrame + (c * framesPerPx).toLong()
+        val f1 = f0 + max(1L, framesPerPx.toLong())
+        val midpoint = f0 + (f1 - f0) / 2
+        val onset = onsets
+            .asSequence()
+            .filter { it.frame in f0 until f1 }
+            .minByOrNull { abs(it.frame - midpoint) }
+        val color = Color(deviationColor(onset?.deviationMs)).copy(alpha = 0.9f)
+        drawLine(
+            color,
+            Offset(c.toFloat(), waveMid - waveHalf * peaks[c]),
+            Offset(c.toFloat(), waveMid + waveHalf * peaks[c]),
+            strokeWidth = 1f,
+        )
+    }
 
     // Click ticks: small downward triangles in the lane above the waveform
     val clicks = synchronized(session) { session.clicks.toList() }
@@ -129,7 +150,6 @@ private fun DrawScope.drawTimeline(session: Session, playhead: Long, secondsVisi
     }
 
     // Attack markers on top of the waveform peak at the attack
-    val onsets = synchronized(session) { session.onsets.toList() }
     for (o in onsets) {
         val x = xOf(o.frame)
         if (x < -12f || x > w + 12f) continue
