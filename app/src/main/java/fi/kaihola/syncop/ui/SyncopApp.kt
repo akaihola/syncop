@@ -65,6 +65,12 @@ fun SyncopApp(vm: SyncopViewModel, onRequestPermission: () -> Unit, onExport: ()
                 onScroll = { vm.playhead = it.coerceIn(0, vm.session.length) },
                 onZoom = { secondsVisible = it },
             )
+            Text(
+                "Peak timing: green on beat, yellow/orange = error, red ≥50 ms; grey = no hit",
+                Modifier.align(Alignment.TopStart).padding(12.dp),
+                color = Fog,
+                fontSize = 11.sp,
+            )
             StatusLine(vm, Modifier.align(Alignment.TopEnd).padding(12.dp))
             if (!vm.hasPermission) {
                 TextButton(onClick = onRequestPermission, Modifier.align(Alignment.Center)) {
