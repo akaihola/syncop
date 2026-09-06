@@ -21,9 +21,10 @@ Rules for TASKS.md usage are at the bottom of the file.
 
 - [*] Navigating the recording by dragging doesn't work. The timeline only
   moves a few pixels no matter how much I drag.
-- [*] There is no accuracy color coding for peaks in the waveform.
 
 ## Completed
+
+- [*] There is no accuracy color coding for peaks in the waveform.
 
 [*]: TASKS.md
 
