@@ -49,21 +49,44 @@ All positions are **frames at 48 kHz on the output clock**. One second is
 48 000 frames.
 
 1. When recording starts, both audio streams start at the current session
-   length. The first click comes one beat later.
+   length. The first click comes one beat later. `AudioRecord` and `AudioTrack`
+   do not start at the same instant, and the difference changes on each run.
 2. The output thread writes 10 ms chunks. It counts frames as it writes. When
    the frame of the next beat falls inside a chunk, it mixes the click into the
    chunk at that offset and records the frame in `Session.clicks`.
 3. The beat interval is `60 * 48000 / tempo` frames. The tempo is read at each
    beat, so a tempo change applies from the next beat.
-4. The input thread appends microphone frames to the session. Before it appends
-   the first frame, it drops `latencyFrames` frames. This shifts the input so
-   that a sound heard exactly on a click lands on the click frame.
+4. The input thread holds the microphone frames until both streams report an
+   `AudioTimestamp`, or for at most 500 ms. From the two timestamps it computes
+   how many input frames were captured before the first output frame was presented
+   (`alignmentSkipFrames` in `audio/Calibration.kt`). It drops that many frames
+   plus `latencyFrames`. This shifts the input so that a sound heard exactly on
+   a click lands on the click frame. If no timestamp arrives, only
+   `latencyFrames` are dropped, as before.
 5. The list of clicks is the source of truth for scoring. Each attack gets
    `deviationMs` = distance to the nearest click. This is why tempo changes and
    resumed recordings do not break the scoring.
 
 `latencyFrames` = (auto estimate + manual offset) in ms, converted to frames,
-never negative.
+never negative. The auto estimate is the residual after the timestamp
+alignment: mostly the acoustic path from speaker to microphone plus any delay
+the HAL does not report.
+
+Assumptions of the alignment (sources: the `AudioTimestamp`, `AudioTrack` and
+`AudioRecord` reference documentation in AOSP, and `FullDuplexStream` in Oboe):
+
+- Both timestamps use the `System.nanoTime` clock (`TIMEBASE_MONOTONIC`), so
+  frames of the two streams can be placed on one time line.
+- The input timestamp is the capture time at the earliest point of the input
+  pipeline. The output timestamp is the time the frame was, or is committed to
+  be, presented. Hardware delay unknown to the HAL is not included.
+- Output timestamps can be missing or wrong while the audio clock stabilises
+  after start. The code waits until the reported output position advances.
+  Oboe's full-duplex helper discards the first input callbacks for the same
+  reason.
+- The audio clock and `System.nanoTime` can drift apart, so the timestamps are
+  read once at start only. The Android reference asks for sparse polling.
+- The skip is never negative. Input that started late is not padded.
 
 ## Attack detection
 
@@ -89,11 +112,19 @@ Subtracting it overflows and no attack ever fires. It starts at `-1L shl 40`.
 
 ## Latency calibration
 
-After each click, `RecordEngine` collects 250 ms of input starting at the click
-frame and gives it to `Calibration.analyse`.
+After each click, `RecordEngine` collects input from 20 ms before the click
+frame to 250 ms after it and gives it to `Calibration.analyse`.
 
 - The window is band passed at 4 kHz (Q = 8). The 4 ms segment with the highest
   mean amplitude is the candidate.
+- The lag is measured from the click frame. It can be negative when the applied
+  latency shift overshoots. This is why the window starts 20 ms early.
+- The stored value is the applied auto latency plus the lag, so the estimate is
+  a total. Without this, each run measured only the remaining lag and the
+  estimate swung between the full latency and zero on alternate runs.
+- `RecordEngine.start` resets the calibration, the pending click queue and the
+  window. Old lags and clicks from a previous run (or from before an erase)
+  cannot leak into the new estimate.
 - The candidate counts as click bleed only if its mean is at least 6 times the
   window mean and above 0.002. Headphones give no bleed and no estimate.
 - The estimate is the median of the last 32 lags, available after 3 lags.
@@ -122,10 +153,13 @@ PCM into `cacheDir/export/` and shares it through `FileProvider` with authority
 
 ## Verification status (2026-09-05)
 
-- Six JVM unit tests pass: attack detection within 10 ms, click bleed rejection,
+- Eleven JVM unit tests pass: attack detection within 10 ms, click bleed rejection,
   calibration lag, silence handling, nearest click deviation, colour ramp.
 - The debug APK builds. No device test was done by the agent. The product owner
   tested on a device on 2026-09-06 and listed problems in `TASKS.md`.
+- 2026-09-06: The click bleed offset fix (timestamp alignment, cumulative
+  estimate, state reset) is covered by JVM tests only. The timestamp alignment
+  needs a device test.
 
 ## Known problems and probable causes
 
@@ -143,9 +177,4 @@ These notes are for whoever works on the `TASKS.md` backlog.
 - **No colour coding on the waveform peaks.** Markers are drawn only where
   `OnsetDetector` fired. If a hit is below the 0.02 floor or inside the 80 ms
   refractory period, it gets no marker. Check the floor first.
-- **Click bleed offset differs on each run.** The auto latency estimate is only
-  applied to input that arrives after the estimate exists, and `AudioRecord`
-  and `AudioTrack` do not start at the same instant. Consider measuring the
-  start offset with `AudioTimestamp` on both streams, or applying the estimate
-  retroactively to already recorded frames.
 - **Landscape.** The activity is locked to portrait in `AndroidManifest.xml`.
