@@ -119,9 +119,10 @@ frame to 250 ms after it and gives it to `Calibration.analyse`.
   mean amplitude is the candidate.
 - The lag is measured from the click frame. It can be negative when the applied
   latency shift overshoots. This is why the window starts 20 ms early.
-- The stored value is the applied auto latency plus the lag, so the estimate is
-  a total. Without this, each run measured only the remaining lag and the
-  estimate swung between the full latency and zero on alternate runs.
+- The stored value is the applied latency minus the manual offset, plus the
+  lag, so the estimate is a total. Without this, each run measured only the
+  remaining lag and the estimate swung between the full latency and zero on
+  alternate runs.
 - `RecordEngine.start` resets the calibration, the pending click queue and the
   window. Old lags and clicks from a previous run (or from before an erase)
   cannot leak into the new estimate.
@@ -153,7 +154,7 @@ PCM into `cacheDir/export/` and shares it through `FileProvider` with authority
 
 ## Verification status (2026-09-05)
 
-- Eleven JVM unit tests pass: attack detection within 10 ms, click bleed rejection,
+- The JVM unit tests pass: attack detection within 10 ms, click bleed rejection,
   calibration lag, silence handling, nearest click deviation, colour ramp.
 - The debug APK builds. No device test was done by the agent. The product owner
   tested on a device on 2026-09-06 and listed problems in `TASKS.md`.

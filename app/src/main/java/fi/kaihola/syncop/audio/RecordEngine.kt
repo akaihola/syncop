@@ -20,14 +20,14 @@ import kotlin.math.roundToLong
  * counted as they are written; clicks are embedded at beat frames derived from [tempoBpm]
  * (read live, so tempo changes take effect at the next beat). The input is aligned to the
  * output with one [AudioTimestamp] from each stream, then shifted back by [latencyFrames], so
- * an attack heard exactly on a click lands on the click's frame. [autoLatencyFrames] is the
- * part of [latencyFrames] that came from [Calibration]; it is the base of the next estimate.
+ * an attack heard exactly on a click lands on the click's frame. [latencyFrames] minus
+ * [manualLatencyFrames] is the applied auto latency, the base of the next estimate.
  */
 class RecordEngine(
     private val session: Session,
     private val tempoBpm: () -> Int,
     private val latencyFrames: () -> Long,
-    private val autoLatencyFrames: () -> Long,
+    private val manualLatencyFrames: () -> Long,
     private val onClick: (Long) -> Unit,
     private val onOnset: (Long) -> Unit,
     private val onBleed: (Long) -> Unit,
@@ -127,8 +127,9 @@ class RecordEngine(
                 held.add(chunk.copyOf(n)); heldFrames += n
                 val align = alignmentFrames(record)
                 if (align == null && heldFrames < SAMPLE_RATE / 2) continue
-                appliedAutoFrames = autoLatencyFrames()
-                skip = (align ?: 0L) + latencyFrames()
+                val latency = latencyFrames()
+                appliedAutoFrames = latency - manualLatencyFrames()
+                skip = (align ?: 0L) + latency
                 for (h in held) {
                     inputFrame = consume(h, h.size, inputFrame, skip)
                     skip = (skip - h.size).coerceAtLeast(0)
