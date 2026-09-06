@@ -45,6 +45,7 @@ class SyncopViewModel(app: Application) : AndroidViewModel(app) {
         session = session,
         tempoBpm = { tempo },
         latencyFrames = { totalLatencyFrames },
+        manualLatencyFrames = { manualLatencyMs.toLong() * SAMPLE_RATE / 1000 },
         onClick = { f -> synchronized(session) { session.addClick(f) }; bump() },
         onOnset = { f -> synchronized(session) { session.addOnset(f) }; bump() },
         onBleed = { autoLatencyMs = recorderCalibration() },

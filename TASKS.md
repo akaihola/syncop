@@ -11,16 +11,16 @@ Rules for TASKS.md usage are at the bottom of the file.
 
 - App must work in horizontal orientation, too.
 
-- The leaked clicks appear at a different offset from the marked beat on each
-  run, even if I erase the recording in between. Make sure to do extensive
-  online research for audio timing accuracy in Android apps.
-
 ## Scheduled
 
 ## In progress
 
 - [*] Navigating the recording by dragging doesn't work. The timeline only
   moves a few pixels no matter how much I drag.
+
+- [*] The leaked clicks appear at a different offset from the marked beat on each
+  run, even if I erase the recording in between. Make sure to do extensive
+  online research for audio timing accuracy in Android apps.
 
 ## Completed
 
