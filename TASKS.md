@@ -6,8 +6,8 @@ Rules for TASKS.md usage are at the bottom of the file.
 
 ## Ordered backlog
 
-- Pinch zooming only zooms one small step at a time, not continuously as I
-  continue to pinch more.
+- Navigating the recording by dragging doesn't work. The timeline only moves a
+  few pixels no matter how much I drag.
 
 - App must work in horizontal orientation, too.
 
@@ -21,6 +21,8 @@ Rules for TASKS.md usage are at the bottom of the file.
 
 - [*] Navigating the recording by dragging doesn't work. The timeline only
   moves a few pixels no matter how much I drag.
+- [*] Pinch zooming only zooms one small step at a time, not continuously as I
+  continue to pinch more.
 
 ## Completed
 

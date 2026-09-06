@@ -4,6 +4,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -21,6 +22,11 @@ import kotlin.math.max
 
 /** Fraction of the width at which the playhead line sits. */
 const val PLAYHEAD_FRACTION = 0.72f
+private const val MIN_SECONDS_VISIBLE = 1f
+private const val MAX_SECONDS_VISIBLE = 30f
+
+fun zoomSeconds(secondsVisible: Float, zoom: Float): Float =
+    (secondsVisible / zoom).coerceIn(MIN_SECONDS_VISIBLE, MAX_SECONDS_VISIBLE)
 
 /** New scroll position after panning [panPx] pixels from [position], at [framesPerPx] zoom. */
 fun panFrame(position: Long, panPx: Float, framesPerPx: Float): Long =
@@ -42,22 +48,28 @@ fun Timeline(
     onZoom: (Float) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val currentPlayhead = rememberUpdatedState(playhead)
+    val currentSecondsVisible = rememberUpdatedState(secondsVisible)
+    val currentOnScroll = rememberUpdatedState(onScroll)
+    val currentOnZoom = rememberUpdatedState(onZoom)
     Canvas(
         modifier
             .fillMaxSize()
-            .pointerInput(interactive, secondsVisible) {
+            .pointerInput(interactive) {
                 if (!interactive) return@pointerInput
-                var scrollPosition = playhead
-                var currentSecondsVisible = secondsVisible
-                detectTransformGestures { _, pan, zoom, _ ->
-                    val framesPerPx = currentSecondsVisible * SAMPLE_RATE / size.width
-                    if (pan.x != 0f) {
-                        scrollPosition = panFrame(scrollPosition, pan.x, framesPerPx)
-                        onScroll(scrollPosition)
-                    }
-                    if (zoom != 1f) {
-                        currentSecondsVisible = (currentSecondsVisible / zoom).coerceIn(1f, 30f)
-                        onZoom(currentSecondsVisible)
+                while (true) {
+                    var scrollPosition = currentPlayhead.value
+                    var gestureSecondsVisible = currentSecondsVisible.value
+                    detectTransformGestures { _, pan, zoom, _ ->
+                        val framesPerPx = gestureSecondsVisible * SAMPLE_RATE / size.width
+                        if (pan.x != 0f) {
+                            scrollPosition = panFrame(scrollPosition, pan.x, framesPerPx)
+                            currentOnScroll.value(scrollPosition)
+                        }
+                        if (zoom != 1f) {
+                            gestureSecondsVisible = zoomSeconds(gestureSecondsVisible, zoom)
+                            currentOnZoom.value(gestureSecondsVisible)
+                        }
                     }
                 }
             },
