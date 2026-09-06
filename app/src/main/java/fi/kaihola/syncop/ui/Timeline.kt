@@ -48,13 +48,17 @@ fun Timeline(
             .pointerInput(interactive, secondsVisible) {
                 if (!interactive) return@pointerInput
                 var scrollPosition = playhead
+                var currentSecondsVisible = secondsVisible
                 detectTransformGestures { _, pan, zoom, _ ->
-                    val framesPerPx = secondsVisible * SAMPLE_RATE / size.width
+                    val framesPerPx = currentSecondsVisible * SAMPLE_RATE / size.width
                     if (pan.x != 0f) {
                         scrollPosition = panFrame(scrollPosition, pan.x, framesPerPx)
                         onScroll(scrollPosition)
                     }
-                    if (zoom != 1f) onZoom((secondsVisible / zoom).coerceIn(1f, 30f))
+                    if (zoom != 1f) {
+                        currentSecondsVisible = (currentSecondsVisible / zoom).coerceIn(1f, 30f)
+                        onZoom(currentSecondsVisible)
+                    }
                 }
             },
     ) {
