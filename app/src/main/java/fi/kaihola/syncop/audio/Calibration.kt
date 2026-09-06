@@ -4,14 +4,19 @@ import fi.kaihola.syncop.model.SAMPLE_RATE
 import kotlin.math.abs
 
 /**
- * Estimates round-trip latency from the app's own click as picked up by the microphone.
- * For each click emitted at output frame `c`, the input around `c .. c + [searchMs]` is
- * band-passed at the click frequency and its energy peak located. The median lag over recent
- * clicks is the latency estimate; if no clear peak exists (headphones) no estimate is produced.
+ * Estimates the residual latency from the app's own click as picked up by the microphone.
+ * For each click emitted at output frame `c`, the input from `c - [leadMs]` to `c + [searchMs]`
+ * is band-passed at the click frequency and its energy peak located. The lag is measured from
+ * the click frame and can be negative when the applied latency shift overshoots. The stored value
+ * is `base + lag`, where `base` is the latency that was already applied to the input, so the
+ * estimate is a total and does not oscillate from run to run. The median over recent clicks is
+ * the estimate; if no clear peak exists (headphones) no estimate is produced.
  */
-class Calibration(private val searchMs: Int = 250) {
+class Calibration(private val searchMs: Int = 250, leadMs: Int = 20) {
     private val lags = ArrayList<Long>()
-    val searchFrames = searchMs * SAMPLE_RATE / 1000
+    /** Frames of input before the click frame that are included in the window. */
+    val leadFrames = leadMs * SAMPLE_RATE / 1000
+    val searchFrames = leadFrames + searchMs * SAMPLE_RATE / 1000
 
     /** Latency estimate in frames, or null if there is not enough evidence. */
     val estimateFrames: Long? get() = if (lags.size < 3) null else lags.sorted()[lags.size / 2]
@@ -22,10 +27,11 @@ class Calibration(private val searchMs: Int = 250) {
         private set
 
     /**
-     * Analyse [window], which must start at the click's output frame and be at least
-     * [searchFrames] long. Returns the detected bleed frame offset within the window, or null.
+     * Analyse [window], which must start [leadFrames] before the click's output frame and be
+     * [searchFrames] long. [base] is the latency in frames already applied to the input.
+     * Returns the bleed offset from the click frame (may be negative), or null.
      */
-    fun analyse(window: ShortArray): Long? {
+    fun analyse(window: ShortArray, base: Long = 0): Long? {
         val bp = Biquad.bandPass(ClickSynth.FREQUENCY_HZ, SAMPLE_RATE, 8.0)
         val n = window.size
         val env = DoubleArray(n)
@@ -48,11 +54,22 @@ class Calibration(private val searchMs: Int = 250) {
         val peakMean = best / len
         bleedDetected = bestIdx >= 0 && peakMean > mean * 6 && peakMean > 0.002
         if (!bleedDetected) return null
-        val lag = bestIdx.toLong()
-        lags.add(lag)
+        val lag = bestIdx.toLong() - leadFrames
+        lags.add(base + lag)
         if (lags.size > 32) lags.removeAt(0)
         return lag
     }
 
     fun reset() { lags.clear(); bleedDetected = false }
+}
+
+/**
+ * Number of input frames captured before output frame 0 was presented, from one
+ * [android.media.AudioTimestamp] of each stream on the same monotonic clock. Never negative:
+ * input that started late is not padded.
+ */
+fun alignmentSkipFrames(outNanos: Long, outFrame: Long, inNanos: Long, inFrame: Long): Long {
+    val outStartNanos = outNanos - outFrame * 1_000_000_000L / SAMPLE_RATE
+    val framesUntilOutStart = (outStartNanos - inNanos) * SAMPLE_RATE / 1_000_000_000L
+    return (inFrame + framesUntilOutStart).coerceAtLeast(0)
 }

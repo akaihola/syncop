@@ -38,6 +38,8 @@ class SyncopViewModel(app: Application) : AndroidViewModel(app) {
         private set
     var hasPermission by mutableStateOf(false)
 
+    private val autoLatencyFrames: Long
+        get() = ((autoLatencyMs ?: 0f) * SAMPLE_RATE / 1000).toLong()
     private val totalLatencyFrames: Long
         get() = (((autoLatencyMs ?: 0f) + manualLatencyMs) * SAMPLE_RATE / 1000).toLong().coerceAtLeast(0)
 
@@ -45,6 +47,7 @@ class SyncopViewModel(app: Application) : AndroidViewModel(app) {
         session = session,
         tempoBpm = { tempo },
         latencyFrames = { totalLatencyFrames },
+        autoLatencyFrames = { autoLatencyFrames },
         onClick = { f -> synchronized(session) { session.addClick(f) }; bump() },
         onOnset = { f -> synchronized(session) { session.addOnset(f) }; bump() },
         onBleed = { autoLatencyMs = recorderCalibration() },
