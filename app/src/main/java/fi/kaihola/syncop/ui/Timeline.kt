@@ -21,6 +21,10 @@ import kotlin.math.max
 /** Fraction of the width at which the playhead line sits. */
 const val PLAYHEAD_FRACTION = 0.72f
 
+/** New scroll position after panning [panPx] pixels from [position], at [framesPerPx] zoom. */
+fun panFrame(position: Long, panPx: Float, framesPerPx: Float): Long =
+    position - (panPx * framesPerPx).toLong()
+
 /**
  * Scrolling timeline: amplitude envelope with click ticks above and coloured attack markers on
  * the attacks themselves. The playhead line is fixed; content moves under it. [secondsVisible]
@@ -42,9 +46,13 @@ fun Timeline(
             .fillMaxSize()
             .pointerInput(interactive, secondsVisible) {
                 if (!interactive) return@pointerInput
+                var scrollPosition = playhead
                 detectTransformGestures { _, pan, zoom, _ ->
                     val framesPerPx = secondsVisible * SAMPLE_RATE / size.width
-                    if (pan.x != 0f) onScroll((playhead - pan.x * framesPerPx).toLong())
+                    if (pan.x != 0f) {
+                        scrollPosition = panFrame(scrollPosition, pan.x, framesPerPx)
+                        onScroll(scrollPosition)
+                    }
                     if (zoom != 1f) onZoom((secondsVisible / zoom).coerceIn(1f, 30f))
                 }
             },

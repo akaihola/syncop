@@ -6,9 +6,6 @@ Rules for TASKS.md usage are at the bottom of the file.
 
 ## Ordered backlog
 
-- Navigating the recording by dragging doesn't work. The timeline only moves a
-  few pixels no matter how much I drag.
-
 - Pinch zooming only zooms one small step at a time, not continuously as I
   continue to pinch more.
 
@@ -23,6 +20,9 @@ Rules for TASKS.md usage are at the bottom of the file.
 ## Scheduled
 
 ## In progress
+
+- [*] Navigating the recording by dragging doesn't work. The timeline only
+  moves a few pixels no matter how much I drag.
 
 ## Completed
 
