@@ -12,6 +12,8 @@ Rules for TASKS.md usage are at the bottom of the file.
 
 ## In progress
 
+- [*] Make the APK available for download from the repository.
+
 ## Completed
 
 - [*] Always compile both a debug version and an optimized release version.

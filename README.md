@@ -14,6 +14,11 @@ by a colour: green exactly on the beat, shading through yellow and orange to red
   to auto-calibrate input latency; a manual offset is also available
 - Recording persists across launches; erase to start over; export as WAV via share
 
+## Download
+
+Get the latest signed APK from the [releases page][releases]. On the phone, allow
+installation from unknown sources, then open the downloaded file.
+
 ## Building
 
 Requires JDK 17, Gradle and Android SDK 35. On NixOS everything is provided by the
@@ -25,7 +30,8 @@ adb install app/build/outputs/apk/debug/app-debug.apk
 ```
 
 The release APK is written to `app/build/outputs/apk/release/app-release-unsigned.apk`.
-It is optimized but unsigned.
+It is optimized but unsigned. To get a signed APK, set the `SYNCOP_*` variables
+described in the [development guide][dev].
 
 ## Documentation
 
@@ -41,5 +47,6 @@ session shifted by the latency offset (auto + manual). Attacks are found from th
 envelope of the 100 Hz – 2.5 kHz band and scored against the nearest click; the click sits
 at 4 kHz so it stays out of that band.
 
+[releases]: https://github.com/akaihola/syncop/releases/latest
 [arch]: docs/architecture.md
 [dev]: docs/development.md
