@@ -12,10 +12,9 @@ Rules for TASKS.md usage are at the bottom of the file.
 
 ## In progress
 
-- [*] Make the APK available for download from the repository.
-
 ## Completed
 
+- [*] Make the APK available for download from the repository.
 - [*] Always compile both a debug version and an optimized release version.
 - [*] Navigating the recording by dragging doesn't work. The timeline only
   moves a few pixels no matter how much I drag.
