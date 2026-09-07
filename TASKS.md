@@ -6,8 +6,6 @@ Rules for TASKS.md usage are at the bottom of the file.
 
 ## Ordered backlog
 
-- Always compile both a debug version and an optimized release version.
-
 - The colored accuracy dots wobble up and down when scrolling.
 
 ## Scheduled
@@ -16,6 +14,7 @@ Rules for TASKS.md usage are at the bottom of the file.
 
 ## Completed
 
+- [*] Always compile both a debug version and an optimized release version.
 - [*] Navigating the recording by dragging doesn't work. The timeline only
   moves a few pixels no matter how much I drag.
 - [*] App must work in horizontal orientation, too.

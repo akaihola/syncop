@@ -6,11 +6,12 @@ The project needs JDK 17, Gradle and Android SDK 35 with Build-Tools 35.0.0.
 On NixOS all of these come from `shell.nix`:
 
 ```sh
-NIXPKGS_ALLOW_UNFREE=1 nix-shell --run 'gradle testDebugUnitTest assembleDebug'
+NIXPKGS_ALLOW_UNFREE=1 nix-shell --run 'gradle testDebugUnitTest assembleDebug assembleRelease'
 ```
 
-The APK is written to `app/build/outputs/apk/debug/app-debug.apk`. Install it
-with `adb install`.
+The debug APK is written to `app/build/outputs/apk/debug/app-debug.apk`. Install it
+with `adb install`. The optimized release APK is written to
+`app/build/outputs/apk/release/app-release-unsigned.apk`. It is unsigned.
 
 Notes:
 

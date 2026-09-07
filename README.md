@@ -20,9 +20,12 @@ Requires JDK 17, Gradle and Android SDK 35. On NixOS everything is provided by t
 dev shell:
 
 ```sh
-NIXPKGS_ALLOW_UNFREE=1 nix-shell --run 'gradle testDebugUnitTest assembleDebug'
+NIXPKGS_ALLOW_UNFREE=1 nix-shell --run 'gradle testDebugUnitTest assembleDebug assembleRelease'
 adb install app/build/outputs/apk/debug/app-debug.apk
 ```
+
+The release APK is written to `app/build/outputs/apk/release/app-release-unsigned.apk`.
+It is optimized but unsigned.
 
 ## Documentation
 
