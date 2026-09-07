@@ -37,8 +37,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.layout.width
 import fi.kaihola.syncop.SyncopViewModel
 import fi.kaihola.syncop.Transport
 import fi.kaihola.syncop.ui.theme.Fog
@@ -51,11 +53,10 @@ fun SyncopApp(vm: SyncopViewModel, onRequestPermission: () -> Unit, onExport: ()
     var secondsVisible by rememberSaveable { mutableFloatStateOf(6f) }
     var confirmErase by rememberSaveable { mutableStateOf(false) }
     var showSettings by rememberSaveable { mutableStateOf(false) }
+    val landscape = LocalConfiguration.current.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
 
-    Column(
-        Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).systemBarsPadding(),
-    ) {
-        Box(Modifier.weight(1f).fillMaxWidth()) {
+    val timeline: @Composable (Modifier) -> Unit = { layoutModifier ->
+        Box(layoutModifier.fillMaxWidth()) {
             Timeline(
                 session = vm.session,
                 revision = vm.revision,
@@ -78,34 +79,22 @@ fun SyncopApp(vm: SyncopViewModel, onRequestPermission: () -> Unit, onExport: ()
                 }
             }
         }
-
+    }
+    val controls: @Composable () -> Unit = {
         TempoControl(vm.tempo, vm::changeTempo, Modifier.fillMaxWidth().padding(horizontal = 16.dp))
+        TransportControls(vm, onExport, { showSettings = true }, { confirmErase = true })
+    }
 
-        Row(
-            Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 20.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            IconButton(onClick = { showSettings = true }, Modifier.size(48.dp)) {
-                Icon(Icons.Filled.Tune, "Settings", tint = Fog)
-            }
-            TransportButton(
-                icon = if (vm.transport == Transport.PLAYING) Icons.Filled.Stop else Icons.Filled.PlayArrow,
-                label = "Play", color = Paper, enabled = vm.session.length > 0,
-                onClick = vm::togglePlay,
-            )
-            TransportButton(
-                icon = if (vm.transport == Transport.RECORDING) Icons.Filled.Stop else Icons.Filled.FiberManualRecord,
-                label = "Record", color = RecordRed, enabled = vm.hasPermission, large = true,
-                onClick = vm::toggleRecord,
-            )
-            IconButton(onClick = onExport, Modifier.size(48.dp), enabled = vm.session.length > 0 && vm.transport == Transport.STOPPED) {
-                Icon(Icons.Filled.IosShare, "Export WAV", tint = Fog)
-            }
-            IconButton(onClick = { confirmErase = true }, Modifier.size(48.dp), enabled = vm.session.length > 0) {
-                Icon(Icons.Filled.Delete, "Erase", tint = Fog)
-            }
-        }
+    if (landscape) Row(
+        Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).systemBarsPadding(),
+    ) {
+        timeline(Modifier.weight(1f))
+        Column(Modifier.width(280.dp), horizontalAlignment = Alignment.CenterHorizontally) { controls() }
+    } else Column(
+        Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).systemBarsPadding(),
+    ) {
+        timeline(Modifier.weight(1f))
+        controls()
     }
 
     if (confirmErase) {
@@ -118,6 +107,35 @@ fun SyncopApp(vm: SyncopViewModel, onRequestPermission: () -> Unit, onExport: ()
         )
     }
     if (showSettings) SettingsDialog(vm) { showSettings = false }
+}
+
+@Composable
+private fun TransportControls(vm: SyncopViewModel, onExport: () -> Unit, onSettings: () -> Unit, onErase: () -> Unit) {
+    Row(
+        Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 20.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        IconButton(onClick = onSettings, Modifier.size(48.dp)) {
+            Icon(Icons.Filled.Tune, "Settings", tint = Fog)
+        }
+        TransportButton(
+            icon = if (vm.transport == Transport.PLAYING) Icons.Filled.Stop else Icons.Filled.PlayArrow,
+            label = "Play", color = Paper, enabled = vm.session.length > 0,
+            onClick = vm::togglePlay,
+        )
+        TransportButton(
+            icon = if (vm.transport == Transport.RECORDING) Icons.Filled.Stop else Icons.Filled.FiberManualRecord,
+            label = "Record", color = RecordRed, enabled = vm.hasPermission, large = true,
+            onClick = vm::toggleRecord,
+        )
+        IconButton(onClick = onExport, Modifier.size(48.dp), enabled = vm.session.length > 0 && vm.transport == Transport.STOPPED) {
+            Icon(Icons.Filled.IosShare, "Export WAV", tint = Fog)
+        }
+        IconButton(onClick = onErase, Modifier.size(48.dp), enabled = vm.session.length > 0) {
+            Icon(Icons.Filled.Delete, "Erase", tint = Fog)
+        }
+    }
 }
 
 @Composable
