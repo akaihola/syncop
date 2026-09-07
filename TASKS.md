@@ -6,8 +6,6 @@ Rules for TASKS.md usage are at the bottom of the file.
 
 ## Ordered backlog
 
-- App must work in horizontal orientation, too.
-
 - Always compile both a debug version and an optimized release version.
 
 - The colored accuracy dots wobble up and down when scrolling.
