@@ -6,11 +6,11 @@ Rules for TASKS.md usage are at the bottom of the file.
 
 ## Ordered backlog
 
-- The colored accuracy dots wobble up and down when scrolling.
-
 ## Scheduled
 
 ## In progress
+
+- [*] The colored accuracy dots wobble up and down when scrolling.
 
 ## Completed
 

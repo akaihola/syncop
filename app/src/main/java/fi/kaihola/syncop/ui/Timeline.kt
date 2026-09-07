@@ -19,6 +19,7 @@ import fi.kaihola.syncop.ui.theme.Paper
 import fi.kaihola.syncop.ui.theme.RecordRed
 import kotlin.math.abs
 import kotlin.math.max
+import kotlin.math.roundToLong
 
 /** Fraction of the width at which the playhead line sits. */
 const val PLAYHEAD_FRACTION = 0.72f
@@ -31,6 +32,14 @@ fun zoomSeconds(secondsVisible: Float, zoom: Float): Float =
 /** New scroll position after panning [panPx] pixels from [position], at [framesPerPx] zoom. */
 fun panFrame(position: Long, panPx: Float, framesPerPx: Float): Long =
     position - (panPx * framesPerPx).toLong()
+
+/** Peak around an attack, using frame bounds that do not depend on the scroll offset. */
+fun markerPeak(session: Session, frame: Long, framesPerPx: Float): Float {
+    val frames = max(1L, framesPerPx.roundToLong())
+    return synchronized(session) {
+        session.peak(frame - frames * 3, frame + frames * 7)
+    }
+}
 
 /**
  * Scrolling timeline: amplitude envelope with click ticks above and coloured attack markers on
@@ -169,9 +178,7 @@ private fun DrawScope.drawTimeline(session: Session, playhead: Long, secondsVisi
     for (o in onsets) {
         val x = xOf(o.frame)
         if (x < -12f || x > w + 12f) continue
-        val col = x.toInt().coerceIn(0, cols - 1)
-        var pk = 0f
-        for (i in (col - 3).coerceAtLeast(0)..(col + 6).coerceAtMost(cols - 1)) pk = max(pk, peaks[i])
+        val pk = markerPeak(session, o.frame, framesPerPx)
         val y = waveMid - waveHalf * pk - 14f
         val color = Color(deviationColor(o.deviationMs))
         drawCircle(color, radius = 9f, center = Offset(x, y))
