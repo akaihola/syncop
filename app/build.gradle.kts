@@ -18,11 +18,24 @@ android {
         versionName = "0.1.0"
     }
 
-    buildTypes {
-        release {
-            isMinifyEnabled = true
-        }
+// Release signing is optional. Set SYNCOP_KEYSTORE_PATH and the related
+// variables to get a signed APK. Without them the APK stays unsigned.
+val keystorePath = System.getenv("SYNCOP_KEYSTORE_PATH")
+if (keystorePath != null) {
+    signingConfigs.create("release") {
+        storeFile = file(keystorePath)
+        storePassword = System.getenv("SYNCOP_KEYSTORE_PASSWORD")
+        keyAlias = System.getenv("SYNCOP_KEY_ALIAS")
+        keyPassword = System.getenv("SYNCOP_KEY_PASSWORD")
     }
+}
+
+buildTypes {
+    release {
+        isMinifyEnabled = true
+        signingConfig = signingConfigs.findByName("release")
+    }
+}
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
