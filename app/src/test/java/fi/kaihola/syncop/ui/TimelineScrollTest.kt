@@ -2,6 +2,10 @@ package fi.kaihola.syncop.ui
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import fi.kaihola.syncop.model.Onset
+import fi.kaihola.syncop.model.SAMPLE_RATE
+import fi.kaihola.syncop.model.Session
+import fi.kaihola.syncop.model.deviationColor
 
 class TimelineScrollTest {
     @Test
@@ -32,5 +36,28 @@ class TimelineScrollTest {
     @Test
     fun panRightMovesPlayheadBackward() {
         assertEquals(1_000L - (20f * 133f).toLong(), panFrame(1_000L, 20f, 133f))
+    }
+
+    @Test
+    fun markerPeakIsStableAcrossHorizontalOffsets() {
+        val session = Session()
+        val samples = ShortArray(SAMPLE_RATE)
+        samples[5_000] = 10_000
+        samples[5_003] = 20_000
+        session.append(samples, samples.size)
+
+        val peakAtOffsetA = markerPeak(session, 5_000L, 100f)
+        val peakAtOffsetB = markerPeak(session, 5_000L, 100f)
+
+        assertEquals(peakAtOffsetA, peakAtOffsetB, 0f)
+        assertEquals(20_000 / 32_768f, peakAtOffsetA, 0f)
+    }
+
+    @Test
+    fun markerKeepsOnsetFrameAndAccuracyColor() {
+        val onset = Onset(5_000L, 25f)
+
+        assertEquals(5_000L, onset.frame)
+        assertEquals(deviationColor(25f), deviationColor(onset.deviationMs))
     }
 }
