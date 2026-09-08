@@ -65,11 +65,12 @@ class Calibration(private val searchMs: Int = 250, leadMs: Int = 20) {
 
 /**
  * Number of input frames captured before output frame 0 was presented, from one
- * [android.media.AudioTimestamp] of each stream on the same monotonic clock. Never negative:
- * input that started late is not padded.
+ * [android.media.AudioTimestamp] of each stream on the same monotonic clock. Negative when
+ * the input started after output frame 0: the caller must then pad that many frames of
+ * silence in front of the input. A warm output stream can start well before the microphone.
  */
 fun alignmentSkipFrames(outNanos: Long, outFrame: Long, inNanos: Long, inFrame: Long): Long {
     val outStartNanos = outNanos - outFrame * 1_000_000_000L / SAMPLE_RATE
     val framesUntilOutStart = (outStartNanos - inNanos) * SAMPLE_RATE / 1_000_000_000L
-    return (inFrame + framesUntilOutStart).coerceAtLeast(0)
+    return inFrame + framesUntilOutStart
 }

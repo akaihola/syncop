@@ -65,9 +65,9 @@ class CalibrationTest {
     }
 
     @Test
-    fun alignmentIsNeverNegative() {
-        // Input started 10 ms after output frame 0 was presented.
+    fun alignmentIsNegativeWhenInputStartsLate() {
+        // Input started 10 ms after output frame 0 was presented: 480 frames of padding needed.
         val skip = alignmentSkipFrames(outNanos = 30_000_000, outFrame = 480, inNanos = 30_000_000, inFrame = 0)
-        assertEquals(0L, skip)
+        assertEquals(-480L, skip)
     }
 }

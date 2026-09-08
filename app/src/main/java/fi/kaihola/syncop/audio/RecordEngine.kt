@@ -115,7 +115,8 @@ class RecordEngine(
         var inputFrame = startFrame // frame index of the next input sample, in output clock
         // Input is held back until both streams report a timestamp, or for at most 500 ms.
         // Then the frames captured before output frame startFrame was presented are dropped,
-        // plus latencyFrames() so a sound heard on a click lands on the click frame.
+        // plus latencyFrames() so a sound heard on a click lands on the click frame. If the
+        // input started after the output, silence is padded in front instead.
         val held = ArrayList<ShortArray>()
         var heldFrames = 0
         var skip = -1L
@@ -130,6 +131,12 @@ class RecordEngine(
                 val latency = latencyFrames()
                 appliedAutoFrames = latency - manualLatencyFrames()
                 skip = (align ?: 0L) + latency
+                if (skip < 0) {
+                    // Input started after output frame 0: pad with silence so frame indices line up.
+                    val pad = ShortArray((-skip).toInt())
+                    inputFrame = consume(pad, pad.size, inputFrame, 0)
+                    skip = 0
+                }
                 for (h in held) {
                     inputFrame = consume(h, h.size, inputFrame, skip)
                     skip = (skip - h.size).coerceAtLeast(0)

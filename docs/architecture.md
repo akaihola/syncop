@@ -60,9 +60,11 @@ All positions are **frames at 48 kHz on the output clock**. One second is
    `AudioTimestamp`, or for at most 500 ms. From the two timestamps it computes
    how many input frames were captured before the first output frame was presented
    (`alignmentSkipFrames` in `audio/Calibration.kt`). It drops that many frames
-   plus `latencyFrames`. This shifts the input so that a sound heard exactly on
-   a click lands on the click frame. If no timestamp arrives, only
-   `latencyFrames` are dropped, as before.
+   plus `latencyFrames`. If the value is negative, the input started after
+   output frame 0 and that many frames of silence are padded in front instead.
+   This shifts the input so that a sound heard exactly on a click lands on the
+   click frame. If no timestamp arrives, only `latencyFrames` are dropped, as
+   before.
 5. The list of clicks is the source of truth for scoring. Each attack gets
    `deviationMs` = distance to the nearest click. This is why tempo changes and
    resumed recordings do not break the scoring.
@@ -86,7 +88,10 @@ Assumptions of the alignment (sources: the `AudioTimestamp`, `AudioTrack` and
   reason.
 - The audio clock and `System.nanoTime` can drift apart, so the timestamps are
   read once at start only. The Android reference asks for sparse polling.
-- The skip is never negative. Input that started late is not padded.
+- The skip can be negative. A warm output stream starts at once while the
+  microphone takes about 85 ms to start on some devices (Zenfone 8), so the
+  input is padded with silence. Clamping this to zero misaligned every warm
+  run by 50 to 90 ms on the Zenfone 8 (found 2026-09-08).
 
 ## Attack detection
 
