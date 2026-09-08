@@ -134,6 +134,14 @@ frame to 250 ms after it and gives it to `Calibration.analyse`.
 - The candidate counts as click bleed only if its mean is at least 6 times the
   window mean and above 0.002. Headphones give no bleed and no estimate.
 - The estimate is the median of the last 32 lags, available after 3 lags.
+- The estimate is applied at the next `RecordEngine.start`, not during the
+  run in which it was measured. It is stored in shared preferences and
+  survives Erase and restart. Only the first run on a fresh install records
+  unshifted.
+- Measured residuals: Fairphone 4 about 7 to 11 ms, Zenfone 8 about 30 ms.
+- Settings shows the last estimate, which stays when a run finds no bleed.
+  A bleed more than 20 ms ahead of the click is outside the window and is
+  reported as "no click bleed detected".
 - The filter adds about 6 frames of delay to the lag (0.1 ms). Tests allow 10
   frames.
 
@@ -170,6 +178,13 @@ PCM into `cacheDir/export/` and shares it through `FileProvider` with authority
 - 2026-09-06: The click bleed offset fix (timestamp alignment, cumulative
   estimate, state reset) is covered by JVM tests only. The timestamp alignment
   needs a device test.
+- 2026-09-08: Device test on an ASUS Zenfone 8 with raw PCM pulled from a
+  debug build (see `device-testing.md`). Before the fixes the bleed sat
+  anywhere from 58 ms ahead to 30 ms behind the click, constant within a run.
+  Cause: a negative timestamp alignment was clamped to zero, and Erase
+  discarded the auto estimate. After the fixes the bleed sits at 0.0 to
+  0.4 ms on every run, after Erase and after an app restart. The Fairphone 4
+  was not retested after the fixes.
 
 ## Known problems and probable causes
 
