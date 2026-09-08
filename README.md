@@ -37,16 +37,20 @@ described in the [development guide][dev].
 
 - [Architecture and design decisions][arch]
 - [Development guide][dev] (build environment, tests, tuning knobs)
+- [Device testing][devtest] (connecting phones, pulling raw recordings, measured latencies)
 - Issues: `TASKS.md`
 
 ## How timing works
 
 All times are frames at 48 kHz on the output clock. The metronome writes clicks into the
 output stream at beat frames and records those frames. Microphone input is appended to the
-session shifted by the latency offset (auto + manual). Attacks are found from the RMS
+session shifted by the latency offset (auto + manual). The auto offset is measured from
+the speaker bleed of the click, saved on the device and applied from the next recording
+on, also after erasing. Attacks are found from the RMS
 envelope of the 100 Hz – 2.5 kHz band and scored against the nearest click; the click sits
 at 4 kHz so it stays out of that band.
 
 [releases]: https://github.com/akaihola/syncop/releases/latest
 [arch]: docs/architecture.md
 [dev]: docs/development.md
+[devtest]: docs/device-testing.md

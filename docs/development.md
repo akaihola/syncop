@@ -29,7 +29,10 @@ Notes:
 
 Unit tests are in `app/src/test/`. They run on the JVM and do not need a
 device. They cover `OnsetDetector`, `Calibration`, `Session` and the colour
-ramp. Audio engines and UI are not covered; test them on a device.
+ramp. Audio engines and UI are not covered; test them on a device. See
+`device-testing.md` for how to connect a phone, drive the app from `adb`,
+pull the raw recording from a debug build and measure the click bleed offset
+with `tools/bleed_offsets.py`.
 
 ## Tuning knobs
 
