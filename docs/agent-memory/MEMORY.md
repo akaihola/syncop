@@ -1,0 +1,2 @@
+- [Zenfone 8 test device](zenfone8-test-device.md) — USB data dead, use wireless adb outside the sandbox
+- [Zenfone 8 calibration findings](zenfone8-calibration-findings.md) — audio path clean; claps pollute the bleed search
