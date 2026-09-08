@@ -153,7 +153,11 @@ frame to 250 ms after it and gives it to `Calibration.analyse`.
 
 `SessionStore` writes `session.pcm` (raw little endian PCM16) and
 `session.json` (clicks, onsets, tempo, manual latency) in `filesDir` when
-recording stops. Erase deletes both. Export writes a 44 byte WAV header plus the
+recording stops. Erase deletes both. The auto latency estimate is a property
+of the device, not the session: it is kept in the `syncop` shared preferences
+and survives erase and restart, so the shift is applied from the first run
+after the device has been calibrated once. Within a run the shift is fixed at
+start; a new estimate takes effect on the next start. Export writes a 44 byte WAV header plus the
 PCM into `cacheDir/export/` and shares it through `FileProvider` with authority
 `fi.kaihola.syncop.files`.
 

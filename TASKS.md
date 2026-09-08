@@ -16,7 +16,8 @@ Rules for TASKS.md usage are at the bottom of the file.
 
 - [*] Auto-calibration on the Zenfone 8 varied from run to run and the click
   bleed landed ahead of or behind the beat. Cause: a negative timestamp
-  alignment was clamped to zero. Fixed by padding the input with silence.
+  alignment was clamped to zero. Fixed by padding the input with silence. The auto estimate now survives
+  Erase and restart, so the shift applies from the first run after calibration.
 - [*] Make the APK available for download from the repository.
 - [*] Always compile both a debug version and an optimized release version.
 - [*] Navigating the recording by dragging doesn't work. The timeline only

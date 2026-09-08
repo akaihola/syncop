@@ -21,6 +21,8 @@ enum class Transport { STOPPED, RECORDING, PLAYING }
 class SyncopViewModel(app: Application) : AndroidViewModel(app) {
     val session = Session()
     private val store = SessionStore(app)
+    /** The auto latency is a property of the device, so it outlives the session and erase. */
+    private val prefs = app.getSharedPreferences("syncop", android.content.Context.MODE_PRIVATE)
 
     var tempo by mutableIntStateOf(120)
         private set
@@ -48,7 +50,10 @@ class SyncopViewModel(app: Application) : AndroidViewModel(app) {
         manualLatencyFrames = { manualLatencyMs.toLong() * SAMPLE_RATE / 1000 },
         onClick = { f -> synchronized(session) { session.addClick(f) }; bump() },
         onOnset = { f -> synchronized(session) { session.addOnset(f) }; bump() },
-        onBleed = { autoLatencyMs = recorderCalibration() },
+        onBleed = {
+            autoLatencyMs = recorderCalibration()
+            autoLatencyMs?.let { prefs.edit().putFloat(AUTO_LATENCY_KEY, it).apply() }
+        },
         onProgress = { f -> playhead = f; bump() },
     )
     private val player: PlaybackEngine = PlaybackEngine(
@@ -62,6 +67,7 @@ class SyncopViewModel(app: Application) : AndroidViewModel(app) {
 
     init {
         store.load(session)?.let { (t, l) -> tempo = t; manualLatencyMs = l }
+        if (prefs.contains(AUTO_LATENCY_KEY)) autoLatencyMs = prefs.getFloat(AUTO_LATENCY_KEY, 0f)
         playhead = session.length
     }
 
@@ -114,7 +120,6 @@ class SyncopViewModel(app: Application) : AndroidViewModel(app) {
         stop()
         synchronized(session) { session.clear() }
         playhead = 0
-        autoLatencyMs = null
         store.delete()
         bump()
     }
@@ -131,5 +136,6 @@ class SyncopViewModel(app: Application) : AndroidViewModel(app) {
     companion object {
         const val MIN_TEMPO = 40
         const val MAX_TEMPO = 240
+        private const val AUTO_LATENCY_KEY = "auto_latency_ms"
     }
 }
