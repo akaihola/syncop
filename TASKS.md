@@ -71,6 +71,15 @@ Here are the rules for TASKS.md usage:
 
 ### Workflow for new issue completion
 
+When TASKS.md conflicts during a rebase or merge:
+
+- Use `main`'s version of every section as the base.
+- Apply again only the move of your own issue.
+- Never restore, add again or re-word another issue's bullet from your side of
+  the conflict.
+- After resolving the conflict, read the whole file and ensure that each
+  bullet is under exactly one `##` heading.
+
 1. Choose issue and schedule work (typically by a heartbeat)
 - Pick the first backlog issue with no dependency to any uncompleted issue.
 - Move it under `## Scheduled` in `TASKS.md` and remove it from `## Ordered
