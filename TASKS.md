@@ -77,14 +77,14 @@ Here are the rules for TASKS.md usage:
   backlog` in the `main` branch and commit.
 
 2. Work on the issue (typically by a task workflow)
+- Ensure the worktree feature branch is rebased on `main`.
 - Move the issue under `## In progress` in `TASKS.md` in the worktree branch,
   ensure it's not in `## Ordered backlog`, and commit.
 - Create or update, review and refine a plan in
   docs/tasks/<N-issue-description>.md in `main` if more description is needed
   than nicely fits in a bullet point. If you created a plan document, link to it
   using a new `[N]` reference-style link.
-- Commit description file (if any) and TASKS.md in `main`.
-- From now on, ensure worktree feature branch is always rebased on `main`.
+- Commit the description file (if any) in `main`.
 - Implement the plan, and lint, test, review and refine the implementation in
   the worktree feature branch.
 
