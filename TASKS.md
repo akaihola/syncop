@@ -51,6 +51,18 @@ Rules for TASKS.md usage are at the bottom of the file.
 
 Here are the rules for TASKS.md usage:
 
+### Invariant: one heading per issue
+
+At any time, each issue's bullet must be under exactly one `##` heading
+(for example `## Ordered backlog` or `## In progress`). It must never be
+under two headings at the same time.
+
+- Before you commit any change to TASKS.md, run:
+  `python3 tools/check_tasks_md.py TASKS.md`
+- The check must pass (exit code 0) before the commit.
+- If the check fails, it prints the duplicated bullet. Remove the bullet
+  from all but one heading before you commit.
+
 ### TASKS.md maintenance sessions
 
 - Each backlog item must be prefixed with either
