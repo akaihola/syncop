@@ -65,7 +65,7 @@ under two headings at the same time.
 
 ### TASKS.md maintenance sessions
 
-- Each backlog item must be prefixed with either
+- Each issue bullet in every section must be prefixed with either
   - a numbered reference-style link (e.g. `[1]`) to a description file, or
   - `[*]` to indicate no description file is needed for a simple task.
 - Link references are listed between `## Completed` and `## Rules`.
@@ -80,6 +80,9 @@ under two headings at the same time.
   - indented `- Depends on: [N]` bullets in TASKS.md, and
   - YAML frontmatter in description files.
 - Ensure backlog order respects dependencies.
+- When you move an issue to a different section, move its lines without
+  a change. Keep the prefix, the bullet text and the line wrapping the same.
+  Git can then see the move, and concurrent moves do not cause a conflict.
 
 ### Workflow for new issue completion
 
