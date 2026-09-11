@@ -92,7 +92,8 @@ under two headings at the same time.
   backlog` in the `main` branch and commit.
 
 2. Work on the issue (typically by a task workflow)
-- From now on, ensure worktree feature branch is always rebased on `main`.
+- Rebase the worktree feature branch on `main` before moving the issue, and keep
+  it rebased afterwards.
 - Move the issue under `## In progress` in `TASKS.md` in the worktree branch,
   ensure it's not in `## Ordered backlog`, and commit.
 - Create or update, review and refine a plan in
