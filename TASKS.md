@@ -6,11 +6,11 @@ Rules for TASKS.md usage are at the bottom of the file.
 
 ## Ordered backlog
 
+## Scheduled
+
 - [*] Let the user select the grid to measure recorded claps against between
   1/1, 1/2, 1/4, 1/8, 1/16, and 1/32. In other words, claps will be judged
   against the nearest grid line.
-
-## Scheduled
 
 ## In progress
 
