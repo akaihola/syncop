@@ -49,8 +49,8 @@ class Session {
 
     fun addClick(frame: Long) { clicks.add(frame) }
 
-    fun addOnset(frame: Long, grid: MeasurementGrid = MeasurementGrid.WHOLE, tempoBpm: Int = 120) {
-        onsets.add(Onset(frame, deviationMs(frame, grid, tempoBpm)))
+    fun addOnset(frame: Long, grid: MeasurementGrid = MeasurementGrid.WHOLE, clickDensity: ClickDensity = ClickDensity.WHOLE) {
+        onsets.add(Onset(frame, deviationMs(frame, grid, clickDensity)))
     }
 
     /** Signed distance in ms from [frame] to the nearest click, or null if no clicks. */
@@ -66,19 +66,22 @@ class Session {
         return best?.let { (frame - it) * 1000f / SAMPLE_RATE }
     }
 
-    fun deviationMs(frame: Long, grid: MeasurementGrid, tempoBpm: Int): Float? {
+    fun deviationMs(frame: Long, grid: MeasurementGrid, clickDensity: ClickDensity): Float? {
         if (grid == MeasurementGrid.WHOLE) return deviationMs(frame)
         if (clicks.isEmpty()) return null
-        val step = (60.0 * SAMPLE_RATE / tempoBpm / grid.denominator).toLong().coerceAtLeast(1)
-        val first = clicks.first()
-        val line = first + ((frame - first).toDouble() / step).roundToLong() * step
+        var index = clicks.binarySearch(frame)
+        if (index < 0) index = (-index - 1).coerceIn(0, clicks.lastIndex)
+        val anchor = clicks[index]
+        val interval = if (index > 0) anchor - clicks[index - 1] else clicks[1] - anchor
+        val step = (interval.toDouble() * clickDensity.denominator / grid.denominator).roundToLong().coerceAtLeast(1)
+        val line = anchor + ((frame - anchor).toDouble() / step).roundToLong() * step
         return (frame - line) * 1000f / SAMPLE_RATE
     }
 
-    fun updateOnsetDeviations(grid: MeasurementGrid, tempoBpm: Int) {
+    fun updateOnsetDeviations(grid: MeasurementGrid, clickDensity: ClickDensity) {
         for (i in onsets.indices) {
             val onset = onsets[i]
-            onsets[i] = onset.copy(deviationMs = deviationMs(onset.frame, grid, tempoBpm))
+            onsets[i] = onset.copy(deviationMs = deviationMs(onset.frame, grid, clickDensity))
         }
     }
 

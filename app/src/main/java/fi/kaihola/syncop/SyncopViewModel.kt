@@ -56,7 +56,7 @@ class SyncopViewModel(app: Application) : AndroidViewModel(app) {
         latencyFrames = { totalLatencyFrames },
         manualLatencyFrames = { manualLatencyMs.toLong() * SAMPLE_RATE / 1000 },
         onClick = { f -> synchronized(session) { session.addClick(f) }; bump() },
-        onOnset = { f -> synchronized(session) { session.addOnset(f, measurementGrid, tempo) }; bump() },
+        onOnset = { f -> synchronized(session) { session.addOnset(f, measurementGrid, clickDensity) }; bump() },
         onBleed = {
             autoLatencyMs = recorderCalibration()
             autoLatencyMs?.let { prefs.edit().putFloat(AUTO_LATENCY_KEY, it).apply() }
@@ -92,7 +92,7 @@ class SyncopViewModel(app: Application) : AndroidViewModel(app) {
     fun changeMeasurementGrid(grid: MeasurementGrid) {
         if (transport == Transport.STOPPED) {
             measurementGrid = grid
-            synchronized(session) { session.updateOnsetDeviations(grid, tempo) }
+            synchronized(session) { session.updateOnsetDeviations(grid, clickDensity) }
             bump()
         }
     }
