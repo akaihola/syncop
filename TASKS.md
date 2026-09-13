@@ -6,6 +6,8 @@ Rules for TASKS.md usage are at the bottom of the file.
 
 ## Ordered backlog
 
+- [*] Stretch the allowed range of the BPM tempo indicator to 1–300 BPM.
+
 - [*] Let the user select the click density between 1/1, 1/2, 1/4, 1/8, and 1/16.
 
 - [*] Let the user select the grid to measure recorded claps against between
@@ -14,12 +16,10 @@ Rules for TASKS.md usage are at the bottom of the file.
 
 ## Scheduled
 
+## In progress
+
 - [*] Dragging the BPM tempo indicator doesn't work correctly. The BPM value jumps
   randomly by small amounts when dragging.
-
-- [*] Stretch the allowed range of the BPM tempo indicator to 1–300 BPM.
-
-## In progress
 
 - [*] The colored accuracy dots wobble up and down when scrolling.
 
