@@ -12,6 +12,7 @@ import fi.kaihola.syncop.audio.PlaybackEngine
 import fi.kaihola.syncop.audio.RecordEngine
 import fi.kaihola.syncop.model.SAMPLE_RATE
 import fi.kaihola.syncop.model.ClickDensity
+import fi.kaihola.syncop.model.MeasurementGrid
 import fi.kaihola.syncop.model.Session
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -28,6 +29,8 @@ class SyncopViewModel(app: Application) : AndroidViewModel(app) {
     var tempo by mutableIntStateOf(120)
         private set
     var clickDensity by mutableStateOf(ClickDensity.WHOLE)
+        private set
+    var measurementGrid by mutableStateOf(MeasurementGrid.WHOLE)
         private set
     var transport by mutableStateOf(Transport.STOPPED)
         private set
@@ -53,7 +56,7 @@ class SyncopViewModel(app: Application) : AndroidViewModel(app) {
         latencyFrames = { totalLatencyFrames },
         manualLatencyFrames = { manualLatencyMs.toLong() * SAMPLE_RATE / 1000 },
         onClick = { f -> synchronized(session) { session.addClick(f) }; bump() },
-        onOnset = { f -> synchronized(session) { session.addOnset(f) }; bump() },
+        onOnset = { f -> synchronized(session) { session.addOnset(f, measurementGrid, clickDensity) }; bump() },
         onBleed = {
             autoLatencyMs = recorderCalibration()
             autoLatencyMs?.let { prefs.edit().putFloat(AUTO_LATENCY_KEY, it).apply() }
@@ -70,10 +73,11 @@ class SyncopViewModel(app: Application) : AndroidViewModel(app) {
     private fun recorderCalibration(): Float? = recorder.calibrationMs
 
     init {
-        store.load(session)?.let { (t, l, d) ->
+        store.load(session)?.let { (t, l, d, g) ->
             tempo = t.coerceIn(MIN_TEMPO, MAX_TEMPO)
             manualLatencyMs = l
             clickDensity = d
+            measurementGrid = g
         }
         if (prefs.contains(AUTO_LATENCY_KEY)) autoLatencyMs = prefs.getFloat(AUTO_LATENCY_KEY, 0f)
         playhead = session.length
@@ -84,6 +88,13 @@ class SyncopViewModel(app: Application) : AndroidViewModel(app) {
     fun changeTempo(bpm: Int) { tempo = bpm.coerceIn(MIN_TEMPO, MAX_TEMPO) }
     fun changeClickDensity(density: ClickDensity) {
         if (transport == Transport.STOPPED) clickDensity = density
+    }
+    fun changeMeasurementGrid(grid: MeasurementGrid) {
+        if (transport == Transport.STOPPED) {
+            measurementGrid = grid
+            synchronized(session) { session.updateOnsetDeviations(grid, clickDensity) }
+            bump()
+        }
     }
     fun nudgeTempo(delta: Int) = changeTempo(tempo + delta)
 
@@ -138,8 +149,8 @@ class SyncopViewModel(app: Application) : AndroidViewModel(app) {
     fun exportWav(): File = store.exportWav(session)
 
     private fun persist() {
-        val t = tempo; val l = manualLatencyMs; val d = clickDensity
-        viewModelScope.launch(Dispatchers.IO) { store.save(session, t, l, d) }
+        val t = tempo; val l = manualLatencyMs; val d = clickDensity; val g = measurementGrid
+        viewModelScope.launch(Dispatchers.IO) { store.save(session, t, l, d, g) }
     }
 
     override fun onCleared() { stop() }

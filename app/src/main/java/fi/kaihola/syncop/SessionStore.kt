@@ -3,6 +3,7 @@ package fi.kaihola.syncop
 import android.content.Context
 import fi.kaihola.syncop.model.Onset
 import fi.kaihola.syncop.model.ClickDensity
+import fi.kaihola.syncop.model.MeasurementGrid
 import fi.kaihola.syncop.model.SAMPLE_RATE
 import fi.kaihola.syncop.model.Session
 import kotlinx.serialization.Serializable
@@ -18,6 +19,7 @@ private data class Meta(
     val tempo: Int,
     val latencyMs: Int,
     val density: ClickDensity = ClickDensity.WHOLE,
+    val measurementGrid: MeasurementGrid = MeasurementGrid.WHOLE,
 )
 
 /** Saves and restores the session in the app's private storage and exports it as WAV. */
@@ -25,17 +27,17 @@ class SessionStore(private val context: Context) {
     private val pcmFile get() = File(context.filesDir, "session.pcm")
     private val metaFile get() = File(context.filesDir, "session.json")
 
-    fun save(session: Session, tempo: Int, latencyMs: Int, density: ClickDensity) {
+    fun save(session: Session, tempo: Int, latencyMs: Int, density: ClickDensity, measurementGrid: MeasurementGrid) {
         val pcm = session.pcmCopy()
         val bytes = ByteBuffer.allocate(pcm.size * 2).order(ByteOrder.LITTLE_ENDIAN)
         bytes.asShortBuffer().put(pcm)
         pcmFile.writeBytes(bytes.array())
-        val meta = Meta(session.clicks.toList(), session.onsets.map { it.frame to it.deviationMs }, tempo, latencyMs, density)
+        val meta = Meta(session.clicks.toList(), session.onsets.map { it.frame to it.deviationMs }, tempo, latencyMs, density, measurementGrid)
         metaFile.writeText(Json.encodeToString(Meta.serializer(), meta))
     }
 
     /** Returns (tempo, latencyMs, density) if a session was restored. */
-    fun load(session: Session): Triple<Int, Int, ClickDensity>? {
+    fun load(session: Session): Quadruple<Int, Int, ClickDensity, MeasurementGrid>? {
         if (!pcmFile.exists() || !metaFile.exists()) return null
         return runCatching {
             val bytes = pcmFile.readBytes()
@@ -43,7 +45,7 @@ class SessionStore(private val context: Context) {
             ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer().get(pcm)
             val meta = Json.decodeFromString(Meta.serializer(), metaFile.readText())
             session.load(pcm, meta.clicks, meta.onsets.map { Onset(it.first, it.second) })
-            Triple(meta.tempo, meta.latencyMs, meta.density)
+            Quadruple(meta.tempo, meta.latencyMs, meta.density, meta.measurementGrid)
         }.getOrNull()
     }
 
@@ -65,3 +67,5 @@ class SessionStore(private val context: Context) {
         return file
     }
 }
+
+data class Quadruple<A, B, C, D>(val first: A, val second: B, val third: C, val fourth: D)
