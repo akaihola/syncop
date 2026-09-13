@@ -8,10 +8,10 @@ import android.media.AudioTimestamp
 import android.media.AudioTrack
 import android.media.MediaRecorder
 import fi.kaihola.syncop.model.SAMPLE_RATE
+import fi.kaihola.syncop.model.ClickDensity
 import fi.kaihola.syncop.model.Session
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.math.max
-import kotlin.math.roundToLong
 
 /**
  * Runs the metronome output and microphone input together.
@@ -26,6 +26,7 @@ import kotlin.math.roundToLong
 class RecordEngine(
     private val session: Session,
     private val tempoBpm: () -> Int,
+    private val clickDensity: () -> ClickDensity,
     private val latencyFrames: () -> Long,
     private val manualLatencyFrames: () -> Long,
     private val onClick: (Long) -> Unit,
@@ -43,6 +44,7 @@ class RecordEngine(
     private var calibFill = -1
     private var calibClick = 0L
     private var appliedAutoFrames = 0L
+    private var densityForRun = ClickDensity.WHOLE
     /** The output track, published so the input thread can read its timestamp. */
     @Volatile private var track: AudioTrack? = null
 
@@ -56,6 +58,7 @@ class RecordEngine(
         val startFrame = session.length
         detector.reset()
         calibration.reset()
+        densityForRun = clickDensity()
         synchronized(pendingClicks) { pendingClicks.clear() }
         calibFill = -1
         outThread = Thread({ outputLoop(startFrame) }, "syncop-out").also { it.priority = Thread.MAX_PRIORITY; it.start() }
@@ -101,7 +104,7 @@ class RecordEngine(
         track.stop(); track.release()
     }
 
-    private fun beatFrames(): Long = (60.0 * SAMPLE_RATE / tempoBpm()).roundToLong()
+    private fun beatFrames(): Long = densityForRun.framesAt(tempoBpm())
 
     @SuppressLint("MissingPermission")
     private fun inputLoop(startFrame: Long) {

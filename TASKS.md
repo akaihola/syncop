@@ -12,9 +12,9 @@ Rules for TASKS.md usage are at the bottom of the file.
 
 ## Scheduled
 
-- [*] Let the user select the click density between 1/1, 1/2, 1/4, 1/8, and 1/16.
-
 ## In progress
+
+- [*] Let the user select the click density between 1/1, 1/2, 1/4, 1/8, and 1/16.
 
 - [*] Dragging the BPM tempo indicator doesn't work correctly. The BPM value jumps
   randomly by small amounts when dragging.
