@@ -11,6 +11,7 @@ import androidx.lifecycle.viewModelScope
 import fi.kaihola.syncop.audio.PlaybackEngine
 import fi.kaihola.syncop.audio.RecordEngine
 import fi.kaihola.syncop.model.SAMPLE_RATE
+import fi.kaihola.syncop.model.ClickDensity
 import fi.kaihola.syncop.model.Session
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -25,6 +26,8 @@ class SyncopViewModel(app: Application) : AndroidViewModel(app) {
     private val prefs = app.getSharedPreferences("syncop", android.content.Context.MODE_PRIVATE)
 
     var tempo by mutableIntStateOf(120)
+        private set
+    var clickDensity by mutableStateOf(ClickDensity.WHOLE)
         private set
     var transport by mutableStateOf(Transport.STOPPED)
         private set
@@ -46,6 +49,7 @@ class SyncopViewModel(app: Application) : AndroidViewModel(app) {
     private val recorder: RecordEngine = RecordEngine(
         session = session,
         tempoBpm = { tempo },
+        clickDensity = { clickDensity },
         latencyFrames = { totalLatencyFrames },
         manualLatencyFrames = { manualLatencyMs.toLong() * SAMPLE_RATE / 1000 },
         onClick = { f -> synchronized(session) { session.addClick(f) }; bump() },
@@ -66,7 +70,11 @@ class SyncopViewModel(app: Application) : AndroidViewModel(app) {
     private fun recorderCalibration(): Float? = recorder.calibrationMs
 
     init {
-        store.load(session)?.let { (t, l) -> tempo = t.coerceIn(MIN_TEMPO, MAX_TEMPO); manualLatencyMs = l }
+        store.load(session)?.let { (t, l, d) ->
+            tempo = t.coerceIn(MIN_TEMPO, MAX_TEMPO)
+            manualLatencyMs = l
+            clickDensity = d
+        }
         if (prefs.contains(AUTO_LATENCY_KEY)) autoLatencyMs = prefs.getFloat(AUTO_LATENCY_KEY, 0f)
         playhead = session.length
     }
@@ -74,6 +82,9 @@ class SyncopViewModel(app: Application) : AndroidViewModel(app) {
     private fun bump() { revision++ }
 
     fun changeTempo(bpm: Int) { tempo = bpm.coerceIn(MIN_TEMPO, MAX_TEMPO) }
+    fun changeClickDensity(density: ClickDensity) {
+        if (transport == Transport.STOPPED) clickDensity = density
+    }
     fun nudgeTempo(delta: Int) = changeTempo(tempo + delta)
 
     fun toggleRecord() {
@@ -127,8 +138,8 @@ class SyncopViewModel(app: Application) : AndroidViewModel(app) {
     fun exportWav(): File = store.exportWav(session)
 
     private fun persist() {
-        val t = tempo; val l = manualLatencyMs
-        viewModelScope.launch(Dispatchers.IO) { store.save(session, t, l) }
+        val t = tempo; val l = manualLatencyMs; val d = clickDensity
+        viewModelScope.launch(Dispatchers.IO) { store.save(session, t, l, d) }
     }
 
     override fun onCleared() { stop() }

@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.layout.width
 import fi.kaihola.syncop.SyncopViewModel
 import fi.kaihola.syncop.Transport
+import fi.kaihola.syncop.model.ClickDensity
 import fi.kaihola.syncop.ui.theme.Fog
 import fi.kaihola.syncop.ui.theme.Paper
 import fi.kaihola.syncop.ui.theme.RecordRed
@@ -82,6 +83,7 @@ fun SyncopApp(vm: SyncopViewModel, onRequestPermission: () -> Unit, onExport: ()
     }
     val controls: @Composable () -> Unit = {
         TempoControl(vm.tempo, vm::changeTempo, Modifier.fillMaxWidth().padding(horizontal = 16.dp))
+        ClickDensityControl(vm.clickDensity, vm.transport == Transport.STOPPED, vm::changeClickDensity)
         TransportControls(vm, onExport, { showSettings = true }, { confirmErase = true })
     }
 
@@ -107,6 +109,24 @@ fun SyncopApp(vm: SyncopViewModel, onRequestPermission: () -> Unit, onExport: ()
         )
     }
     if (showSettings) SettingsDialog(vm) { showSettings = false }
+}
+
+@Composable
+private fun ClickDensityControl(density: ClickDensity, enabled: Boolean, onDensity: (ClickDensity) -> Unit) {
+    var expanded by rememberSaveable { mutableStateOf(false) }
+    Box {
+        TextButton(onClick = { expanded = true }, enabled = enabled) {
+            Text("Clicks: ${density.label}")
+        }
+        androidx.compose.material3.DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            ClickDensity.entries.forEach { option ->
+                androidx.compose.material3.DropdownMenuItem(
+                    text = { Text(option.label) },
+                    onClick = { onDensity(option); expanded = false },
+                )
+            }
+        }
+    }
 }
 
 @Composable
