@@ -7,7 +7,7 @@ by a colour: green exactly on the beat, shading through yellow and orange to red
 
 ## Features
 
-- Tempo 40–240 BPM; drag the tempo strip for fast changes, tap − / + for single steps
+- Tempo 1–300 BPM; drag the tempo strip for fast changes, tap − / + for single steps
 - Record, stop, resume; scroll back and play any part; pinch to zoom the timeline
 - Optional clicks during playback (settings)
 - Attack detection ignores the app's own click, and speaker bleed of the click is used
