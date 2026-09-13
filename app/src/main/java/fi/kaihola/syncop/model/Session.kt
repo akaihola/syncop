@@ -1,6 +1,7 @@
 package fi.kaihola.syncop.model
 
 import kotlin.math.abs
+import kotlin.math.roundToLong
 
 const val SAMPLE_RATE = 48_000
 
@@ -48,8 +49,8 @@ class Session {
 
     fun addClick(frame: Long) { clicks.add(frame) }
 
-    fun addOnset(frame: Long) {
-        onsets.add(Onset(frame, deviationMs(frame)))
+    fun addOnset(frame: Long, grid: MeasurementGrid = MeasurementGrid.WHOLE, tempoBpm: Int = 120) {
+        onsets.add(Onset(frame, deviationMs(frame, grid, tempoBpm)))
     }
 
     /** Signed distance in ms from [frame] to the nearest click, or null if no clicks. */
@@ -63,6 +64,22 @@ class Session {
             if (best == null || abs(frame - c) < abs(frame - best)) best = c
         }
         return best?.let { (frame - it) * 1000f / SAMPLE_RATE }
+    }
+
+    fun deviationMs(frame: Long, grid: MeasurementGrid, tempoBpm: Int): Float? {
+        if (grid == MeasurementGrid.WHOLE) return deviationMs(frame)
+        if (clicks.isEmpty()) return null
+        val step = (60.0 * SAMPLE_RATE / tempoBpm / grid.denominator).toLong().coerceAtLeast(1)
+        val first = clicks.first()
+        val line = first + ((frame - first).toDouble() / step).roundToLong() * step
+        return (frame - line) * 1000f / SAMPLE_RATE
+    }
+
+    fun updateOnsetDeviations(grid: MeasurementGrid, tempoBpm: Int) {
+        for (i in onsets.indices) {
+            val onset = onsets[i]
+            onsets[i] = onset.copy(deviationMs = deviationMs(onset.frame, grid, tempoBpm))
+        }
     }
 
     fun clear() {

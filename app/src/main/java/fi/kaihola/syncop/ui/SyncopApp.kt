@@ -44,6 +44,7 @@ import androidx.compose.foundation.layout.width
 import fi.kaihola.syncop.SyncopViewModel
 import fi.kaihola.syncop.Transport
 import fi.kaihola.syncop.model.ClickDensity
+import fi.kaihola.syncop.model.MeasurementGrid
 import fi.kaihola.syncop.ui.theme.Fog
 import fi.kaihola.syncop.ui.theme.Paper
 import fi.kaihola.syncop.ui.theme.RecordRed
@@ -202,6 +203,7 @@ private fun SettingsDialog(vm: SyncopViewModel, onDismiss: () -> Unit) {
                     onValueChange = { vm.manualLatencyMs = it.roundToInt() },
                     valueRange = -100f..300f,
                 )
+                GridControl(vm.measurementGrid, vm.transport == Transport.STOPPED, vm::changeMeasurementGrid)
                 val auto = vm.autoLatencyMs
                 Text(
                     if (auto == null) "Auto-calibration: no click bleed detected yet (use the speaker to calibrate)"
@@ -213,4 +215,17 @@ private fun SettingsDialog(vm: SyncopViewModel, onDismiss: () -> Unit) {
             }
         },
     )
+}
+
+@Composable
+private fun GridControl(grid: MeasurementGrid, enabled: Boolean, onGrid: (MeasurementGrid) -> Unit) {
+    var expanded by rememberSaveable { mutableStateOf(false) }
+    Box {
+        TextButton(onClick = { expanded = true }, enabled = enabled) { Text("Measure claps: ${grid.label}") }
+        androidx.compose.material3.DropdownMenu(expanded, { expanded = false }) {
+            MeasurementGrid.entries.forEach { option ->
+                androidx.compose.material3.DropdownMenuItem(text = { Text(option.label) }, onClick = { onGrid(option); expanded = false })
+            }
+        }
+    }
 }
