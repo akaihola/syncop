@@ -66,7 +66,7 @@ class SyncopViewModel(app: Application) : AndroidViewModel(app) {
     private fun recorderCalibration(): Float? = recorder.calibrationMs
 
     init {
-        store.load(session)?.let { (t, l) -> tempo = t; manualLatencyMs = l }
+        store.load(session)?.let { (t, l) -> tempo = t.coerceIn(MIN_TEMPO, MAX_TEMPO); manualLatencyMs = l }
         if (prefs.contains(AUTO_LATENCY_KEY)) autoLatencyMs = prefs.getFloat(AUTO_LATENCY_KEY, 0f)
         playhead = session.length
     }
@@ -134,8 +134,8 @@ class SyncopViewModel(app: Application) : AndroidViewModel(app) {
     override fun onCleared() { stop() }
 
     companion object {
-        const val MIN_TEMPO = 40
-        const val MAX_TEMPO = 240
+        const val MIN_TEMPO = 1
+        const val MAX_TEMPO = 300
         private const val AUTO_LATENCY_KEY = "auto_latency_ms"
     }
 }

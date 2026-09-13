@@ -12,7 +12,7 @@ These decisions were agreed with the product owner on 2026-09-05.
 | Stack | Kotlin, Jetpack Compose, single Activity, one ViewModel |
 | Minimum Android | API 31 (Android 12) |
 | Package and name | `fi.kaihola.syncop`, "Syncop" |
-| Tempo | 40 to 240 BPM, default 120 |
+| Tempo | 1 to 300 BPM, default 120 |
 | Beat scoring | Only main beats. No subdivisions, no accents |
 | Marker colour | Green at 0 ms. Red at 50 ms or more from the nearest click. Yellow and orange between |
 | Timeline zoom | Pinch gesture, 1 to 30 seconds visible |
