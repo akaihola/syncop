@@ -21,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -47,20 +48,27 @@ fun TempoControl(tempo: Int, onTempo: (Int) -> Unit, modifier: Modifier = Modifi
     val density = LocalDensity.current
     val pxPerBpm = with(density) { 6.dp.toPx() }
     val accumulator = remember { floatArrayOf(0f) }
+    val currentTempo = rememberUpdatedState(tempo)
+    val currentOnTempo = rememberUpdatedState(onTempo)
 
     Column(
         modifier
             .clip(RoundedCornerShape(20.dp))
             .background(MaterialTheme.colorScheme.surface)
             .pointerInput(pxPerBpm) {
+                var dragTempo = currentTempo.value
                 detectHorizontalDragGestures(
-                    onDragStart = { accumulator[0] = 0f },
+                    onDragStart = {
+                        accumulator[0] = 0f
+                        dragTempo = currentTempo.value
+                    },
                 ) { _, dragAmount ->
                     accumulator[0] += dragAmount
                     val steps = (accumulator[0] / pxPerBpm).toInt()
                     if (steps != 0) {
                         accumulator[0] -= steps * pxPerBpm
-                        onTempo(tempo + steps)
+                        dragTempo += steps
+                        currentOnTempo.value(dragTempo)
                     }
                 }
             }
