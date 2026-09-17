@@ -14,8 +14,8 @@ android {
         applicationId = "fi.kaihola.syncop"
         minSdk = 31
         targetSdk = 35
-        versionCode = 3
-        versionName = "0.2.0"
+        versionCode = 4
+        versionName = "0.2.1"
     }
 
     // Release signing is optional. Set SYNCOP_KEYSTORE_PATH and the related
