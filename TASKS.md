@@ -72,6 +72,19 @@ under two headings at the same time.
 - If any issue is missing a link:
   - Create the first missing numbered description file in
     docs/tasks/<N-issue-description>.md and add the link
+- Any completed tasks which haven't yet been moved from `## In Progress` to
+  `## Completed` should be moved there.
+- Any in progress tasks which haven't yet been moved from `## Ordered backlog` or
+  `## Scheduled` to `## In Progress` should be moved there.
+- Remove all issues the user has moved to the `## Accepted` section along with any
+  related description files in `docs/tasks/` and the reference-style links pointing to
+  them.
+- Ensure there are no duplicate sections, and that they are in the correct order:
+  `## Unverified proposals` -> `## Ordered backlog` -> `## Scheduled` ->
+  `## In Progress` -> `## Completed` -> `## Accepted` -> `## Rules`.
+- If there are numbered issues in `TASKS.md` without a reference-style link or a file
+  pointed to by a reference-style link, create both. Keep just enough of the description
+  in `TASKS.md` and move details to the issue description file.
 
 ### Modifying issues
 
