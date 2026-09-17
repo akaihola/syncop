@@ -19,9 +19,9 @@ Rules for TASKS.md usage are at the bottom of the file.
 - [*] Dragging the BPM tempo indicator doesn't work correctly. The BPM value jumps
   randomly by small amounts when dragging.
 
-- [*] The colored accuracy dots wobble up and down when scrolling.
-
 ## Completed
+
+- [*] The colored accuracy dots wobble up and down when scrolling.
 
 - [*] Stretch the allowed range of the BPM tempo indicator to 1–300 BPM.
 
