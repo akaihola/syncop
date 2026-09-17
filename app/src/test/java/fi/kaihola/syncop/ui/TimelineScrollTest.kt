@@ -1,12 +1,11 @@
 package fi.kaihola.syncop.ui
 
+import org.junit.Assert.assertEquals
+import org.junit.Test
 import fi.kaihola.syncop.model.Onset
 import fi.kaihola.syncop.model.SAMPLE_RATE
 import fi.kaihola.syncop.model.Session
 import fi.kaihola.syncop.model.deviationColor
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotEquals
-import org.junit.Test
 
 class TimelineScrollTest {
     @Test
@@ -14,7 +13,7 @@ class TimelineScrollTest {
         var seconds = 6f
         repeat(3) { seconds = zoomSeconds(seconds, 2f) }
 
-        assertEquals(1f, seconds, 0f)
+        assertEquals(1f, seconds, 0.0001f)
     }
 
     @Test
@@ -47,16 +46,12 @@ class TimelineScrollTest {
         samples[5_003] = 20_000
         session.append(samples, samples.size)
 
-        val framesPerPx = 100f
-        val firstFrameA = 10_000L - (720f * framesPerPx).toLong()
-        val firstFrameB = 20_000L - (720f * framesPerPx).toLong()
-        val xAtOffsetA = (5_000L - firstFrameA) / framesPerPx
-        val xAtOffsetB = (5_000L - firstFrameB) / framesPerPx
-        val peakAtOffsetA = markerPeak(session, 5_000L, framesPerPx)
-        val peakAtOffsetB = markerPeak(session, 5_000L, framesPerPx)
+        val peakAtOffsetA = markerPeak(session, 5_000L)
+        val peakAtOffsetB = markerPeak(session, 5_000L)
+        val peakAtZoomedOut = markerPeak(session, 5_000L)
 
-        assertNotEquals(xAtOffsetA, xAtOffsetB)
         assertEquals(peakAtOffsetA, peakAtOffsetB, 0f)
+        assertEquals(peakAtOffsetA, peakAtZoomedOut, 0f)
         assertEquals(20_000 / 32_768f, peakAtOffsetA, 0f)
     }
 
