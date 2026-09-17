@@ -19,11 +19,11 @@ Rules for TASKS.md usage are at the bottom of the file.
 - [*] Dragging the BPM tempo indicator doesn't work correctly. The BPM value jumps
   randomly by small amounts when dragging.
 
-- [*] Stretch the allowed range of the BPM tempo indicator to 1–300 BPM.
-
 - [*] The colored accuracy dots wobble up and down when scrolling.
 
 ## Completed
+
+- [*] Stretch the allowed range of the BPM tempo indicator to 1–300 BPM.
 
 - [*] Auto-calibration on the Zenfone 8 varied from run to run and the click
   bleed landed ahead of or behind the beat. Cause: a negative timestamp
