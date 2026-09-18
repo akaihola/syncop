@@ -10,12 +10,6 @@ Rules for TASKS.md usage are at the bottom of the file.
 
 ## In progress
 
-- [*] Feature: Currently `Clicks: 1/1` is on the main screen and `Measure claps: 1/1` is
-  in the Settings. Bring them both on the main screen and use a standard or well
-  established Android widget for them. Use `1/4` as the default for those, and ensure
-  the selected tempo indicates quarters per minute. So `Clicks: 1/4` indicates at 120
-  BPM indicates 120 clicks per minute (or 2 clicks per second or 500 ms per click).
-
 - [*] Bug: Dragging to change the tempo increases to the right, but the dial slides to
   the left. Use a standard or a well established Android widget for the tempo dial to
   ensure it is intuitive to use.
@@ -30,6 +24,12 @@ Rules for TASKS.md usage are at the bottom of the file.
   randomly by small amounts when dragging.
 
 ## Completed
+
+- [*] Feature: Currently `Clicks: 1/1` is on the main screen and `Measure claps: 1/1` is
+  in the Settings. Bring them both on the main screen and use a standard or well
+  established Android widget for them. Use `1/4` as the default for those, and ensure
+  the selected tempo indicates quarters per minute. So `Clicks: 1/4` indicates at 120
+  BPM indicates 120 clicks per minute (or 2 clicks per second or 500 ms per click).
 
 - [*] The colored accuracy dots wobble up and down when scrolling.
 
