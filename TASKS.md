@@ -95,6 +95,7 @@ same time.
 - If there are numbered issues in `TASKS.md` without a reference-style link or a file
   pointed to by a reference-style link, create both. Keep just enough of the description
   in `TASKS.md` and move details to the issue description file.
+- Commit all changes.
 
 ### Modifying issues
 
