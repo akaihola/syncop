@@ -28,9 +28,9 @@ class SyncopViewModel(app: Application) : AndroidViewModel(app) {
 
     var tempo by mutableIntStateOf(120)
         private set
-    var clickDensity by mutableStateOf(ClickDensity.WHOLE)
+    var clickDensity by mutableStateOf(ClickDensity.QUARTER)
         private set
-    var measurementGrid by mutableStateOf(MeasurementGrid.WHOLE)
+    var measurementGrid by mutableStateOf(MeasurementGrid.QUARTER)
         private set
     var transport by mutableStateOf(Transport.STOPPED)
         private set
