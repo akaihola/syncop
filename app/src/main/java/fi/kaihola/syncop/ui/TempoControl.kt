@@ -111,7 +111,7 @@ private fun TempoRuler(tempo: Int, modifier: Modifier, pxPerBpm: Float) {
         for (d in -visible..visible) {
             val bpm = tempo + d
             if (bpm < SyncopViewModel.MIN_TEMPO || bpm > SyncopViewModel.MAX_TEMPO) continue
-            val x = centre + d * pxPerBpm
+            val x = centre - d * pxPerBpm
             val major = bpm % 10 == 0
             val h = if (major) size.height else size.height * 0.45f
             val fade = 1f - (kotlin.math.abs(x - centre) / centre).coerceIn(0f, 1f)
