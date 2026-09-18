@@ -67,7 +67,10 @@ fun TempoControl(tempo: Int, onTempo: (Int) -> Unit, modifier: Modifier = Modifi
                     val steps = (accumulator[0] / pxPerBpm).toInt()
                     if (steps != 0) {
                         accumulator[0] -= steps * pxPerBpm
-                        dragTempo += steps
+                        dragTempo = (dragTempo + steps).coerceIn(
+                            SyncopViewModel.MIN_TEMPO,
+                            SyncopViewModel.MAX_TEMPO,
+                        )
                         currentOnTempo.value(dragTempo)
                     }
                 }
@@ -111,7 +114,7 @@ private fun TempoRuler(tempo: Int, modifier: Modifier, pxPerBpm: Float) {
         for (d in -visible..visible) {
             val bpm = tempo + d
             if (bpm < SyncopViewModel.MIN_TEMPO || bpm > SyncopViewModel.MAX_TEMPO) continue
-            val x = centre + d * pxPerBpm
+            val x = centre - d * pxPerBpm
             val major = bpm % 10 == 0
             val h = if (major) size.height else size.height * 0.45f
             val fade = 1f - (kotlin.math.abs(x - centre) / centre).coerceIn(0f, 1f)

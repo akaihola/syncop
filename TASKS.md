@@ -14,11 +14,11 @@ Rules for TASKS.md usage are at the bottom of the file.
 
 ## Scheduled
 
+## In progress
+
 - [*] Bug: Dragging to change the tempo increases to the right, but the dial slides to
   the left. Use a standard or a well established Android widget for the tempo dial to
   ensure it is intuitive to use.
-
-## In progress
 
 - [*] Let the user select the grid to measure recorded claps against between 1/1, 1/2,
   1/4, 1/8, 1/16, and 1/32. In other words, claps will be judged against the nearest
