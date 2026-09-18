@@ -67,7 +67,10 @@ fun TempoControl(tempo: Int, onTempo: (Int) -> Unit, modifier: Modifier = Modifi
                     val steps = (accumulator[0] / pxPerBpm).toInt()
                     if (steps != 0) {
                         accumulator[0] -= steps * pxPerBpm
-                        dragTempo += steps
+                        dragTempo = (dragTempo + steps).coerceIn(
+                            SyncopViewModel.MIN_TEMPO,
+                            SyncopViewModel.MAX_TEMPO,
+                        )
                         currentOnTempo.value(dragTempo)
                     }
                 }
