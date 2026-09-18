@@ -18,8 +18,8 @@ private data class Meta(
     val onsets: List<Pair<Long, Float?>>,
     val tempo: Int,
     val latencyMs: Int,
-    val density: ClickDensity = ClickDensity.WHOLE,
-    val measurementGrid: MeasurementGrid = MeasurementGrid.WHOLE,
+    val density: ClickDensity = ClickDensity.QUARTER,
+    val measurementGrid: MeasurementGrid = MeasurementGrid.QUARTER,
 )
 
 /** Saves and restores the session in the app's private storage and exports it as WAV. */

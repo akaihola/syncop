@@ -84,7 +84,10 @@ fun SyncopApp(vm: SyncopViewModel, onRequestPermission: () -> Unit, onExport: ()
     }
     val controls: @Composable () -> Unit = {
         TempoControl(vm.tempo, vm::changeTempo, Modifier.fillMaxWidth().padding(horizontal = 16.dp))
-        ClickDensityControl(vm.clickDensity, vm.transport == Transport.STOPPED, vm::changeClickDensity)
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+            ClickDensityControl(vm.clickDensity, vm.transport == Transport.STOPPED, vm::changeClickDensity)
+            GridControl(vm.measurementGrid, vm.transport == Transport.STOPPED, vm::changeMeasurementGrid)
+        }
         TransportControls(vm, onExport, { showSettings = true }, { confirmErase = true })
     }
 

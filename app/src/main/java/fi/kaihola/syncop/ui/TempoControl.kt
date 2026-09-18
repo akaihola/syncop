@@ -86,7 +86,7 @@ fun TempoControl(tempo: Int, onTempo: (Int) -> Unit, modifier: Modifier = Modifi
             RoundButton(Icons.Filled.Remove, "Slower", enabled = tempo > SyncopViewModel.MIN_TEMPO) { onTempo(tempo - 1) }
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text("$tempo", fontSize = 64.sp, fontWeight = FontWeight.Light, color = Paper, lineHeight = 64.sp)
-                Text("BPM", fontSize = 13.sp, color = Fog, letterSpacing = 2.sp)
+                Text("BPM, quarter notes/min", fontSize = 13.sp, color = Fog, letterSpacing = 1.sp)
             }
             RoundButton(Icons.Filled.Add, "Faster", enabled = tempo < SyncopViewModel.MAX_TEMPO) { onTempo(tempo + 1) }
         }

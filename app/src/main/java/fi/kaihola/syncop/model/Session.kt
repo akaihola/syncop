@@ -49,7 +49,7 @@ class Session {
 
     fun addClick(frame: Long) { clicks.add(frame) }
 
-    fun addOnset(frame: Long, grid: MeasurementGrid = MeasurementGrid.WHOLE, clickDensity: ClickDensity = ClickDensity.WHOLE) {
+    fun addOnset(frame: Long, grid: MeasurementGrid = MeasurementGrid.QUARTER, clickDensity: ClickDensity = ClickDensity.QUARTER) {
         onsets.add(Onset(frame, deviationMs(frame, grid, clickDensity)))
     }
 

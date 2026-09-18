@@ -11,13 +11,12 @@ class ClickDensityTest {
     }
 
     @Test
-    fun defaultDensityPreservesOneClickPerBeat() {
-        assertEquals(ClickDensity.WHOLE, ClickDensity.entries.first())
-        assertEquals(1, ClickDensity.WHOLE.denominator)
+    fun quarterIsOneClickPerBeatAt120Bpm() {
+        assertEquals(24_000L, ClickDensity.QUARTER.framesAt(120))
     }
 
     @Test
     fun dividesTheBeatAt120Bpm() {
-        assertEquals(listOf(24_000L, 12_000L, 6_000L, 3_000L, 1_500L), ClickDensity.entries.map { it.framesAt(120) })
+        assertEquals(listOf(96_000L, 48_000L, 24_000L, 12_000L, 6_000L), ClickDensity.entries.map { it.framesAt(120) })
     }
 }

@@ -13,5 +13,5 @@ enum class ClickDensity(val label: String, val denominator: Int) {
 
     ;
 
-    fun framesAt(tempoBpm: Int): Long = (60.0 * SAMPLE_RATE / tempoBpm / denominator).roundToLong()
+    fun framesAt(tempoBpm: Int): Long = (60.0 * SAMPLE_RATE * 4 / tempoBpm / denominator).roundToLong()
 }
