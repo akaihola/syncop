@@ -8,7 +8,7 @@ Rules for TASKS.md usage are at the bottom of the file.
 
 ## Scheduled
 
-## In progress
+## In Progress
 
 ## Completed
 
@@ -52,6 +52,8 @@ Rules for TASKS.md usage are at the bottom of the file.
 
 - [*] Pinch zooming only zooms one small step at a time, not continuously as I continue
   to pinch more.
+
+## Accepted
 
 [*]: TASKS.md
 
