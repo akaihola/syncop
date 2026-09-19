@@ -8,7 +8,9 @@ Rules for TASKS.md usage are at the bottom of the file.
 
 ## Scheduled
 
-## In progress
+## In Progress
+
+## Completed
 
 - [*] Bug: Dragging to change the tempo increases to the right, but the dial slides to
   the left. Use a standard or a well established Android widget for the tempo dial to
@@ -22,8 +24,6 @@ Rules for TASKS.md usage are at the bottom of the file.
 
 - [*] Dragging the BPM tempo indicator doesn't work correctly. The BPM value jumps
   randomly by small amounts when dragging.
-
-## Completed
 
 - [*] Feature: Currently `Clicks: 1/1` is on the main screen and `Measure claps: 1/1` is
   in the Settings. Bring them both on the main screen and use a standard or well
@@ -52,6 +52,8 @@ Rules for TASKS.md usage are at the bottom of the file.
 
 - [*] Pinch zooming only zooms one small step at a time, not continuously as I continue
   to pinch more.
+
+## Accepted
 
 [*]: TASKS.md
 
