@@ -12,9 +12,7 @@ Rules for TASKS.md usage are at the bottom of the file.
 
 ## Completed
 
-- [*] Bug: Dragging to change the tempo increases to the right, but the dial slides to
-  the left. Use a standard or a well established Android widget for the tempo dial to
-  ensure it is intuitive to use.
+- [1] Make the tempo dial move in the same direction as the drag.
 
 - [*] Let the user select the grid to measure recorded claps against between 1/1, 1/2,
   1/4, 1/8, 1/16, and 1/32. In other words, claps will be judged against the nearest
@@ -25,28 +23,22 @@ Rules for TASKS.md usage are at the bottom of the file.
 - [*] Dragging the BPM tempo indicator doesn't work correctly. The BPM value jumps
   randomly by small amounts when dragging.
 
-- [*] Feature: Currently `Clicks: 1/1` is on the main screen and `Measure claps: 1/1` is
-  in the Settings. Bring them both on the main screen and use a standard or well
-  established Android widget for them. Use `1/4` as the default for those, and ensure
-  the selected tempo indicates quarters per minute. So `Clicks: 1/4` indicates at 120
-  BPM indicates 120 clicks per minute (or 2 clicks per second or 500 ms per click).
+- [2] Put click and clap measurement controls on the main screen, with quarter-note
+  defaults and tempo in quarter notes per minute.
 
 - [*] The colored accuracy dots wobble up and down when scrolling.
 
 - [*] Stretch the allowed range of the BPM tempo indicator to 1–300 BPM.
 
-- [*] Auto-calibration on the Zenfone 8 varied from run to run and the click bleed
-  landed ahead of or behind the beat. Cause: a negative timestamp alignment was clamped
-  to zero. Fixed by padding the input with silence. The auto estimate now survives Erase
-  and restart, so the shift applies from the first run after calibration.
+- [3] Correct negative timestamp alignment on the Zenfone 8 and preserve the
+  auto-calibration estimate across Erase and restart.
 - [*] Make the APK available for download from the repository.
 - [*] Always compile both a debug version and an optimized release version.
 - [*] Navigating the recording by dragging doesn't work. The timeline only moves a few
   pixels no matter how much I drag.
 - [*] App must work in horizontal orientation, too.
-- [*] The leaked clicks appear at a different offset from the marked beat on each run,
-  even if I erase the recording in between. Make sure to do extensive online research
-  for audio timing accuracy in Android apps.
+- [4] Keep leaked click offsets stable across recording runs, including after Erase;
+  research Android audio timing accuracy.
 
 - [*] There is no accuracy color coding for peaks in the waveform.
 
@@ -55,6 +47,10 @@ Rules for TASKS.md usage are at the bottom of the file.
 
 ## Accepted
 
+[1]: docs/tasks/1-tempo-dial-direction.md
+[2]: docs/tasks/2-main-screen-rhythm-controls.md
+[3]: docs/tasks/3-zenfone8-auto-calibration.md
+[4]: docs/tasks/4-stable-click-timing.md
 [*]: TASKS.md
 
 ---
@@ -66,7 +62,7 @@ Here are the rules for TASKS.md usage:
 ### Invariant: one heading per issue
 
 At any time, each issue's bullet must be under exactly one `##` heading (for example
-`## Ordered backlog` or `## In progress`). It must never be under two headings at the
+`## Ordered backlog` or `## In Progress`). It must never be under two headings at the
 same time.
 
 - Before you commit any change to TASKS.md, run:
@@ -80,10 +76,17 @@ same time.
 - Each issue bullet in every section must be prefixed with either
     - a numbered reference-style link (e.g. `[1]`) to a description file, or
     - `[*]` to indicate no description file is needed for a simple task.
-- Link references are listed between `## Completed` and `## Rules`.
-- If any issue is missing a link:
-    - Create the first missing numbered description file in
-      docs/tasks/<N-issue-description>.md and add the link
+- List link references after the `## Accepted` issues and before the separator
+  above `## Rules`.
+- Keep simple issues inline with `[*]`. For detailed issues, keep a short summary
+  in TASKS.md and put requirements, rationale, examples, and acceptance criteria
+  in `docs/tasks/N-issue-description.md`. Preserve all substantive details.
+- Reuse an issue's existing number and description file. For a new description,
+  use the next unused positive integer above the highest number in TASKS.md and
+  `docs/tasks/`. Start at 1 if neither has numbered issues. Use the same number
+  in the bullet, link definition, and filename.
+- Before you commit, check that all issue links resolve to existing files, each
+  number identifies one issue, and each description file has a tracker link.
 - Any completed tasks which haven't yet been moved from `## In Progress` to
   `## Completed` should be moved there.
 - Any in progress tasks which haven't yet been moved from `## Ordered backlog` or
@@ -122,7 +125,7 @@ same time.
 
 - Rebase the worktree feature branch on `main` before moving the issue, and keep it
   rebased afterwards.
-- Move the issue under `## In progress` in `TASKS.md` in the worktree branch, ensure
+- Move the issue under `## In Progress` in `TASKS.md` in the worktree branch, ensure
   it's not in `## Ordered backlog`, and commit.
 - Create or update, review and refine a plan in docs/tasks/<N-issue-description>.md in
   `main` if more description is needed than nicely fits in a bullet point. If you
@@ -134,7 +137,7 @@ same time.
 3. Merge and deploy (typically by last steps of a task workflow)
 
 - Merge the rebased branch on `main`, and remove the worktree and branch.
-- Move the issue from `## In progress` to `## Completed` in TASKS.md and commit.
+- Move the issue from `## In Progress` to `## Completed` in TASKS.md and commit.
 - Do any deployment steps if defined in the general development worklow.
 
 When TASKS.md conflicts during a rebase or merge:
