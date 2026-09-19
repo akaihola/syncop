@@ -12,9 +12,7 @@ Rules for TASKS.md usage are at the bottom of the file.
 
 ## Completed
 
-- [*] Bug: Dragging to change the tempo increases to the right, but the dial slides to
-  the left. Use a standard or a well established Android widget for the tempo dial to
-  ensure it is intuitive to use.
+- [1] Make the tempo dial move in the same direction as the drag.
 
 - [*] Let the user select the grid to measure recorded claps against between 1/1, 1/2,
   1/4, 1/8, 1/16, and 1/32. In other words, claps will be judged against the nearest
@@ -25,28 +23,22 @@ Rules for TASKS.md usage are at the bottom of the file.
 - [*] Dragging the BPM tempo indicator doesn't work correctly. The BPM value jumps
   randomly by small amounts when dragging.
 
-- [*] Feature: Currently `Clicks: 1/1` is on the main screen and `Measure claps: 1/1` is
-  in the Settings. Bring them both on the main screen and use a standard or well
-  established Android widget for them. Use `1/4` as the default for those, and ensure
-  the selected tempo indicates quarters per minute. So `Clicks: 1/4` indicates at 120
-  BPM indicates 120 clicks per minute (or 2 clicks per second or 500 ms per click).
+- [2] Put click and clap measurement controls on the main screen, with quarter-note
+  defaults and tempo in quarter notes per minute.
 
 - [*] The colored accuracy dots wobble up and down when scrolling.
 
 - [*] Stretch the allowed range of the BPM tempo indicator to 1–300 BPM.
 
-- [*] Auto-calibration on the Zenfone 8 varied from run to run and the click bleed
-  landed ahead of or behind the beat. Cause: a negative timestamp alignment was clamped
-  to zero. Fixed by padding the input with silence. The auto estimate now survives Erase
-  and restart, so the shift applies from the first run after calibration.
+- [3] Correct negative timestamp alignment on the Zenfone 8 and preserve the
+  auto-calibration estimate across Erase and restart.
 - [*] Make the APK available for download from the repository.
 - [*] Always compile both a debug version and an optimized release version.
 - [*] Navigating the recording by dragging doesn't work. The timeline only moves a few
   pixels no matter how much I drag.
 - [*] App must work in horizontal orientation, too.
-- [*] The leaked clicks appear at a different offset from the marked beat on each run,
-  even if I erase the recording in between. Make sure to do extensive online research
-  for audio timing accuracy in Android apps.
+- [4] Keep leaked click offsets stable across recording runs, including after Erase;
+  research Android audio timing accuracy.
 
 - [*] There is no accuracy color coding for peaks in the waveform.
 
@@ -55,6 +47,10 @@ Rules for TASKS.md usage are at the bottom of the file.
 
 ## Accepted
 
+[1]: docs/tasks/1-tempo-dial-direction.md
+[2]: docs/tasks/2-main-screen-rhythm-controls.md
+[3]: docs/tasks/3-zenfone8-auto-calibration.md
+[4]: docs/tasks/4-stable-click-timing.md
 [*]: TASKS.md
 
 ---
