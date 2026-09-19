@@ -62,7 +62,7 @@ Here are the rules for TASKS.md usage:
 ### Invariant: one heading per issue
 
 At any time, each issue's bullet must be under exactly one `##` heading (for example
-`## Ordered backlog` or `## In progress`). It must never be under two headings at the
+`## Ordered backlog` or `## In Progress`). It must never be under two headings at the
 same time.
 
 - Before you commit any change to TASKS.md, run:
@@ -76,10 +76,17 @@ same time.
 - Each issue bullet in every section must be prefixed with either
     - a numbered reference-style link (e.g. `[1]`) to a description file, or
     - `[*]` to indicate no description file is needed for a simple task.
-- Link references are listed between `## Completed` and `## Rules`.
-- If any issue is missing a link:
-    - Create the first missing numbered description file in
-      docs/tasks/<N-issue-description>.md and add the link
+- List link references after the `## Accepted` issues and before the separator
+  above `## Rules`.
+- Keep simple issues inline with `[*]`. For detailed issues, keep a short summary
+  in TASKS.md and put requirements, rationale, examples, and acceptance criteria
+  in `docs/tasks/N-issue-description.md`. Preserve all substantive details.
+- Reuse an issue's existing number and description file. For a new description,
+  use the next unused positive integer above the highest number in TASKS.md and
+  `docs/tasks/`. Start at 1 if neither has numbered issues. Use the same number
+  in the bullet, link definition, and filename.
+- Before you commit, check that all issue links resolve to existing files, each
+  number identifies one issue, and each description file has a tracker link.
 - Any completed tasks which haven't yet been moved from `## In Progress` to
   `## Completed` should be moved there.
 - Any in progress tasks which haven't yet been moved from `## Ordered backlog` or
@@ -118,7 +125,7 @@ same time.
 
 - Rebase the worktree feature branch on `main` before moving the issue, and keep it
   rebased afterwards.
-- Move the issue under `## In progress` in `TASKS.md` in the worktree branch, ensure
+- Move the issue under `## In Progress` in `TASKS.md` in the worktree branch, ensure
   it's not in `## Ordered backlog`, and commit.
 - Create or update, review and refine a plan in docs/tasks/<N-issue-description>.md in
   `main` if more description is needed than nicely fits in a bullet point. If you
@@ -130,7 +137,7 @@ same time.
 3. Merge and deploy (typically by last steps of a task workflow)
 
 - Merge the rebased branch on `main`, and remove the worktree and branch.
-- Move the issue from `## In progress` to `## Completed` in TASKS.md and commit.
+- Move the issue from `## In Progress` to `## Completed` in TASKS.md and commit.
 - Do any deployment steps if defined in the general development worklow.
 
 When TASKS.md conflicts during a rebase or merge:
