@@ -1,5 +1,7 @@
 # Syncop
 
+> This is a prototype developed using AI coding agents and not intended for production use.
+
 Android metronome timing trainer. Syncop plays clicks at a chosen tempo while recording
 your playing, then shows the recording on a scrolling timeline with each attack marked
 by a colour: green exactly on the beat, shading through yellow and orange to red at
